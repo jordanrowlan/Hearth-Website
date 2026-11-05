@@ -1,0 +1,134 @@
+{
+  "season": "Thanksgiving 2026",
+  "orderDeadline": "2026-11-14T23:59:00-06:00",
+  "deliveryDate": "2026-11-25",
+  "freeDeliveryThreshold": 150,
+  "deliveryFee": 20,
+  "serviceArea": "Tulsa Metro area",
+  "courses": [
+    {
+      "course": "The Main",
+      "note": "Cooked fully, sliced and ready to warm.",
+      "items": [
+        {
+          "id": "turkey",
+          "name": "Herb-Roasted Turkey Breast",
+          "desc": "About 4 lb boneless breast with butter, sage and thyme, sliced, with a cup of pan gravy.",
+          "size": "About 4 lb, serves 8 with leftovers",
+          "price": 98,
+          "maxQty": null
+        }
+      ]
+    },
+    {
+      "course": "Sides",
+      "note": "Each tray comes in an oven-safe pan. Portions are generous, so expect leftovers.",
+      "items": [
+        {
+          "id": "dressing",
+          "name": "Sage Stuffing",
+          "desc": "Cubed bread, butter, celery, onion and fresh sage.",
+          "size": "9x13 pan, serves 8",
+          "price": 40
+        },
+        {
+          "id": "gfdressing",
+          "name": "Gluten-Free Sage Stuffing",
+          "desc": "The same stuffing made with gluten-free bread. Made in a kitchen that also uses wheat, so please tell me about any severe allergy.",
+          "size": "8x8 pan, serves 4 to 6",
+          "price": 31
+        },
+        {
+          "id": "potatoes",
+          "name": "Mashed Potatoes",
+          "desc": "Russet potatoes whipped smooth with cream and butter.",
+          "size": "2-quart pan, serves 6 to 8",
+          "price": 31
+        },
+        {
+          "id": "greenbean",
+          "name": "Green Beans with Mushrooms and Crispy Shallots",
+          "desc": "Fresh green beans and sautéed mushrooms in a light, from-scratch sauce, topped with crispy shallots.",
+          "size": "2-quart pan, serves 6 to 8",
+          "price": 40
+        },
+        {
+          "id": "sweetpot",
+          "name": "Classic Sweet Potatoes",
+          "desc": "Whipped sweet potatoes with maple and brown butter, topped with toasted marshmallows and pecans.",
+          "size": "2-quart pan, serves 6 to 8",
+          "price": 36
+        },
+        {
+          "id": "sweetpotsf",
+          "name": "Brown Butter Sweet Potatoes (No Added Sugar)",
+          "desc": "Roasted sweet potatoes with brown butter, fresh sage, orange zest and toasted pecans. No added sugar.",
+          "size": "2-quart pan, serves 6 to 8",
+          "price": 36
+        },
+        {
+          "id": "mac",
+          "name": "Baked Three-Cheese Macaroni",
+          "desc": "Sharp cheddar, gruyère and a golden crumb top.",
+          "size": "2-quart pan, serves 6 to 8",
+          "price": 42
+        },
+        {
+          "id": "carrots",
+          "name": "Honey-Thyme Roasted Carrots",
+          "desc": "Whole carrots roasted until caramelized.",
+          "size": "1.5-quart pan, serves 6",
+          "price": 30
+        },
+        {
+          "id": "gravy",
+          "name": "Turkey Gravy",
+          "desc": "Rich, smooth and made from roasted turkey stock.",
+          "size": "1 quart, serves 8 to 10",
+          "price": 17
+        },
+        {
+          "id": "cranberry",
+          "name": "Orange Cranberry Relish",
+          "desc": "Fresh cranberries, orange zest and a little honey.",
+          "size": "1 pint, serves 8",
+          "price": 15
+        },
+        {
+          "id": "rolls",
+          "name": "Soft Dinner Rolls",
+          "desc": "Buttery pull-apart rolls, baked the day before.",
+          "size": "One dozen",
+          "price": 20
+        }
+      ]
+    },
+    {
+      "course": "Pies",
+      "note": "Nine-inch pies, baked fresh on Tuesday.",
+      "items": [
+        {
+          "id": "pecan",
+          "name": "Pecan Pie",
+          "desc": "Toasted pecans in a brown sugar and vanilla filling.",
+          "size": "9 inch, serves 8",
+          "price": 44
+        },
+        {
+          "id": "pumpkin",
+          "name": "Pumpkin Pie",
+          "desc": "Silky pumpkin custard with warm spices.",
+          "size": "9 inch, serves 8",
+          "price": 38
+        },
+        {
+          "id": "apple",
+          "name": "Apple Crumble Pie",
+          "desc": "Tart and sweet apples under a buttery oat crumble.",
+          "size": "9 inch, serves 8",
+          "price": 42
+        }
+      ]
+    }
+  ]
+}
