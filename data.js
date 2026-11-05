@@ -27,6 +27,20 @@ var HEARTH = {
     dinnerLink: "https://buy.stripe.com/test_28E6ozbyqcybcdY7nH8IU04",
     plateLink: "https://buy.stripe.com/test_eVq7sDbyqaq31zkcI18IU01",
     platePrice: 39,
+    // Delivery area: ZIP codes within about 20 miles of Broken Arrow.
+    // Add or remove ZIPs here. Orders from other ZIPs see a "sorry" message instead of the order buttons.
+    deliveryZips: [
+      "74011","74012","74013","74014",            // Broken Arrow
+      "74008",                                     // Bixby
+      "74037",                                     // Jenks
+      "74055",                                     // Owasso
+      "74429",                                     // Coweta
+      "74033",                                     // Glenpool
+      "74015",                                     // Catoosa
+      "74103","74104","74105","74106","74107","74108","74110","74112","74114","74115","74116",
+      "74119","74120","74126","74127","74128","74129","74130","74132","74133","74134","74135",
+      "74136","74137","74145","74146"              // Tulsa
+    ],
     dinnersStartAt: 150,
     menu: [
       { course: "The Main", note: "Cooked fully, sliced and ready to warm.", items: [

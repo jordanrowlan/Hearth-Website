@@ -36,6 +36,16 @@
       <p class="signoff" style="font-size:1.7rem">With love, Jordan</p>
     </div>
   </div>
+  <form id="zipform" class="panel stack" style="gap:10px;padding:20px" novalidate>
+    <label for="zip" style="font-size:1rem">Check that I deliver to you
+      <span class="formnote" style="font-weight:400">I deliver across the Tulsa Metro area. Enter your delivery ZIP code to start your order.</span>
+    </label>
+    <div class="inline-form">
+      <input id="zip" name="zip" inputmode="numeric" autocomplete="postal-code" maxlength="5" placeholder="Delivery ZIP code" style="max-width:220px">
+      <button class="btn" type="submit">Check my ZIP</button>
+    </div>
+    <p id="zipmsg" role="status" hidden></p>
+  </form>
   <div id="closed" class="closed" hidden><b>Thanksgiving orders are closed.</b> Thank you to everyone who ordered!</div>
 </section>
 
@@ -46,7 +56,7 @@
   <h2 id="plate">Thanksgiving Plate for One</h2>
   <p>Celebrating solo, or cooking for one this year? You still deserve the whole feast.</p>
   <p><b><span data-tg="platePrice">$39</span>, delivery included.</b> Herb-roasted turkey breast with gravy, your choice of any 3 sides from the menu, and a soft dinner roll. Packed ready to reheat and delivered <span data-tg="deliveryText">Wednesday, Nov 25</span>.</p>
-  <p><a class="btn" data-order="plateLink" href="#">Order a Plate for One</a></p>
+  <p><a class="btn" data-order="plateLink" href="#">Order a Plate for One</a></p><p class="formnote" data-ziphint>Check your ZIP code above to order.</p>
 </section>
 
 <section class="stack" aria-labelledby="order">
@@ -56,8 +66,9 @@
     <b>Free delivery across the Tulsa Metro area on <span data-tg="deliveryText">Wednesday, Nov 25</span>.</b>
     <span>Full Thanksgiving dinners start at $<span data-tg="dinnersStartAt">150</span> and are made to feed a crowd. Cooking for just yourself? The Plate for One above was made with you in mind.</span>
     <span>Oklahoma sales tax is added at checkout. Orders close <span data-tg="orderByText">Saturday, Nov 14</span>.</span>
+    <span>Not sure if you're in my delivery area? Text me at 918-968-5002 before ordering.</span>
   </div>
-  <p><a class="btn" data-order="dinnerLink" href="#">Order &amp; pay</a></p>
+  <p><a class="btn" data-order="dinnerLink" href="#">Order &amp; pay</a></p><p class="formnote" data-ziphint>Check your ZIP code above to order.</p>
   <p class="formnote">Questions or a special request? Text or call 918-968-5002.</p>
 </section>
 
@@ -83,11 +94,28 @@
       c.items.map(function(i){return '<div class="item"><div><h3>'+esc(i.name)+'</h3><p class="desc">'+esc(i.desc)+'</p><p class="size">'+esc(i.size)+'</p></div><div class="price">$'+i.price+'</div></div>';}).join("")+'</div>';
   }).join("");
   document.querySelectorAll("[data-tg]").forEach(function(el){var k=el.dataset.tg;el.textContent=(k==="platePrice"?"$":"")+T[k];});
-  var closed=new Date()>new Date(T.orderBy);
-  document.querySelectorAll("[data-order]").forEach(function(a){
-    if(closed){a.setAttribute("aria-disabled","true");a.removeAttribute("href");a.textContent="Orders closed";}
-    else a.href=T[a.dataset.order];
-  });
+  var closed=new Date()>new Date(T.orderBy), zipOk=false;
+  function paint(){
+    document.querySelectorAll("[data-order]").forEach(function(a){
+      if(closed){a.setAttribute("aria-disabled","true");a.removeAttribute("href");a.textContent="Orders closed";}
+      else if(!zipOk){a.setAttribute("aria-disabled","true");a.removeAttribute("href");}
+      else {a.removeAttribute("aria-disabled");a.href=T[a.dataset.order];}
+    });
+    document.querySelectorAll("[data-ziphint]").forEach(function(h){h.hidden=closed||zipOk;});
+  }
+  var zf=document.getElementById("zipform"), zi=document.getElementById("zip"), zm=document.getElementById("zipmsg");
+  function check(z){
+    z=(z||"").replace(/\D/g,"").slice(0,5);
+    if(z.length<5){zm.hidden=false;zm.className="formmsg err";zm.textContent="Please enter a 5-digit ZIP code.";zipOk=false;paint();return;}
+    zipOk=T.deliveryZips.indexOf(z)!==-1; zm.hidden=false;
+    if(zipOk){zm.className="formmsg ok";zm.textContent="Good news, I deliver to "+z+"! Your order buttons are ready below.";try{localStorage.setItem("hearthZip",z)}catch(e){}}
+    else{zm.className="formmsg err";zm.textContent="I'm so sorry, I only deliver within the Tulsa Metro area right now. Text me at 918-968-5002 and I'll see what I can do.";}
+    paint();
+  }
+  zf.addEventListener("submit",function(e){e.preventDefault();check(zi.value);});
+  if(closed) zf.hidden=true;
+  try{var saved=localStorage.getItem("hearthZip");if(saved&&!closed){zi.value=saved;check(saved);}}catch(e){}
+  paint();
   if(closed) document.getElementById("closed").hidden=false;
 })();
 </script>
