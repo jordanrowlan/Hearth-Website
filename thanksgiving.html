@@ -25,11 +25,11 @@
 <header class="page-head">
   <div class="eyebrow">Hearth Kitchen Co.</div>
   <h1>Thanksgiving Pre-Order</h1>
-  <p class="sub" style="margin:0">Homemade sides, turkey and pies, cooked in small batches and brought to your door the day before Thanksgiving. Pick what you need, pay ahead, and put your feet up.</p>
+  <p class="sub" style="margin:0">Homemade sides, turkey and pies, cooked in small batches and brought to your door the day before Thanksgiving. Pick what you need, pay online, and put your feet up.</p>
   <div class="facts">
     <div class="fact"><small>Order by</small><b>Saturday, Nov 14</b></div>
     <div class="fact"><small>Delivered</small><b>Wednesday, Nov 25</b></div>
-    <div class="fact"><small>Pay</small><b>In full, to confirm</b></div>
+    <div class="fact"><small>Pay</small><b>Online, at checkout</b></div>
   </div>
   <p class="callout">Everything arrives fully cooked in oven-safe pans, ready to reheat. Please list any food allergies in your notes, and I will do my best to adjust a dish when I know ahead of time.</p>
 </header>
@@ -37,31 +37,15 @@
 <main id="menu"></main>
 
 <section id="order">
-  <h2 class="sec">Delivery details</h2>
-  <p class="sub">Complimentary delivery across the Tulsa Metro on Wednesday, Nov 25, on orders of $150 or more. Orders under $150 have a $20 delivery fee. I will text you a two-hour delivery window before Thanksgiving week.</p>
-  <form id="f" action="https://formspree.io/f/FORMSPREE_ID" method="POST" data-thanks="Thank you! Your order is in. Jordan will send your invoice soon. Your order is confirmed once it's paid.">
-    <div class="row">
-      <label for="name">Your name<input id="name" name="name" autocomplete="name" required></label>
-      <label for="phone">Phone<input id="phone" name="phone" type="tel" autocomplete="tel" required></label>
-    </div>
-    <label for="email">Email (your invoice is sent here)<input id="email" name="email" type="email" autocomplete="email" required></label>
-    <label for="addr">Delivery address<input id="addr" name="address" autocomplete="street-address" required></label>
-    <label for="notes">Allergies or notes<textarea id="notes" name="notes" placeholder="Please list any food allergies."></textarea></label>
-    <input type="hidden" name="order" id="orderField">
-    <input type="hidden" name="_subject" value="New Thanksgiving pre-order">
-
-    <section class="sum" aria-live="polite">
-      <ul class="lines" id="lines"></ul>
-      <div><span>Items</span><span id="sub">$0.00</span></div>
-      <div><span>Delivery</span><span id="del">Complimentary</span></div>
-      <div class="tot"><span>Total before tax</span><span id="tot">$0.00</span></div>
-      <p id="minnote" style="margin:4px 0 0;color:var(--accent-ink);font-size:.9rem"></p>
-    </section>
-
-    <p class="callout"><b>How to pay.</b> After I receive your order I will email you an invoice with the total plus Oklahoma sales tax. Pay online by card, or by check or cash made out to Hearth Kitchen Co., LLC. Your order is confirmed once payment is received.</p>
-    <button class="btn" type="submit" id="go" disabled>Place my order</button>
-    <p id="sent" class="formmsg" hidden role="status"></p>
-  </form>
+  <h2 class="sec">Ready to order?</h2>
+  <p class="sub">Tap below to choose your dishes and pay securely by card, Apple Pay or Google Pay. Your cart starts with a classic Thanksgiving dinner, and you can change any quantity or add more.</p>
+  <div class="callout" style="display:grid;gap:6px">
+    <b>Delivery: $20 across the Tulsa Metro on Wednesday, Nov 25.</b>
+    <span>Spending $150 or more on food? Enter code <b>FREEDELIVERY</b> at checkout and your delivery is free.</span>
+    <span>Oklahoma sales tax is added at checkout. Orders close Saturday, Nov 14.</span>
+  </div>
+  <p style="margin:18px 0 0"><a class="btn" id="orderBtn" href="https://buy.stripe.com/test_dRm9ALdGyeGj0vgbDX8IU00">Order &amp; pay</a></p>
+  <p class="formnote" style="margin-top:12px">Questions or a special request? Text or call 918-968-5002.</p>
 </section>
 
 <footer>
@@ -75,7 +59,6 @@
 </div>
 
 <script>
-var DELIVERY_FEE = 20, MINIMUM = 150;
 var MENU = [
   {course:"The main", note:"Cooked fully, sliced and ready to warm.", items:[
     {id:"turkey", name:"Herb-Roasted Turkey Breast", desc:"About 4 lb boneless breast with butter, sage and thyme, sliced, with a cup of pan gravy.", size:"About 4 lb, serves 8 with leftovers", price:98}
@@ -99,8 +82,6 @@ var MENU = [
     {id:"apple", name:"Apple Crumble Pie", desc:"Tart and sweet apples under a buttery oat crumble.", size:"9 inch, serves 8", price:42}
   ]}
 ];
-var qty = {}, byId = {};
-MENU.forEach(function(c){c.items.forEach(function(i){byId[i.id]=i; qty[i.id]=0;});});
 function money(n){return "$"+n.toFixed(2);}
 function el(t,c,h){var e=document.createElement(t); if(c)e.className=c; if(h!=null)e.innerHTML=h; return e;}
 var menu = document.getElementById("menu");
@@ -114,42 +95,11 @@ MENU.forEach(function(c){
     left.appendChild(el("h3",null,i.name));
     left.appendChild(el("p",null,i.desc));
     left.appendChild(el("div","meta",'<span class="price">'+money(i.price)+'</span><span>'+i.size+'</span>'));
-    var st = el("div","step");
-    var minus = el("button",null,"&minus;"); minus.type="button"; minus.setAttribute("aria-label","Remove one "+i.name);
-    var out = el("output",null,"0"); out.id="q-"+i.id;
-    var plus = el("button",null,"+"); plus.type="button"; plus.setAttribute("aria-label","Add one "+i.name);
-    minus.onclick=function(){ if(qty[i.id]>0){qty[i.id]--; update();} };
-    plus.onclick=function(){ if(qty[i.id]<20){qty[i.id]++; update();} };
-    st.appendChild(minus); st.appendChild(out); st.appendChild(plus);
-    row.appendChild(left); row.appendChild(st);
+    row.appendChild(left);
     sec.appendChild(row);
   });
   menu.appendChild(sec);
 });
-function chosen(){ return Object.keys(qty).filter(function(k){return qty[k]>0;}).map(function(k){return {name:byId[k].name,qty:qty[k],price:byId[k].price};}); }
-function totals(){ var s=0; chosen().forEach(function(x){s+=x.qty*x.price;}); var d=(s>0&&s<MINIMUM)?DELIVERY_FEE:0; return {sub:s,del:d,tot:s+d}; }
-function valid(){ return chosen().length>0 && ["name","phone","email","addr"].every(function(f){return document.getElementById(f).value.trim();}); }
-function update(){
-  Object.keys(qty).forEach(function(k){
-    document.getElementById("q-"+k).textContent=qty[k];
-    document.getElementById("row-"+k).classList.toggle("on",qty[k]>0);
-  });
-  var t=totals(), ul=document.getElementById("lines"); ul.innerHTML="";
-  chosen().forEach(function(x){ ul.appendChild(el("li",null,"<span>"+x.qty+" &times; "+x.name+"</span><span>"+money(x.qty*x.price)+"</span>")); });
-  document.getElementById("sub").textContent=money(t.sub);
-  document.getElementById("del").textContent=t.del?money(t.del):"Complimentary";
-  document.getElementById("tot").textContent=money(t.tot);
-  document.getElementById("minnote").textContent=(t.sub>0&&t.sub<MINIMUM)?("Add "+money(MINIMUM-t.sub)+" more for complimentary delivery."):"";
-  document.getElementById("go").disabled=!valid();
-  var L=chosen().map(function(x){return x.qty+" x "+x.name+" = "+money(x.qty*x.price);});
-  L.push("Delivery: "+(t.del?money(t.del):"Complimentary"),"Total before tax: "+money(t.tot));
-  document.getElementById("orderField").value=L.join("\n");
-}
-["name","phone","email","addr"].forEach(function(f){document.getElementById(f).addEventListener("input",update);});
-var form=document.getElementById("f");
-form.afterSend=function(){ Object.keys(qty).forEach(function(k){qty[k]=0;}); update(); };
-update();
 </script>
-<script src="form.js"></script>
 </body>
 </html>
