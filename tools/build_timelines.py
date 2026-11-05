@@ -151,3 +151,43 @@ if __name__ == "__main__":
     orders = json.load(open(sys.argv[1]))
     open(sys.argv[2], "w").write(render(orders))
     print("timelines:", len(orders))
+
+
+# ---------------- Email version ----------------
+def email_for(od):
+    """Return (to, subject, plain-text body) for one customer's personal timeline email."""
+    rows, pies, plates, full = timeline(od)
+    items = {k: v for k, v in (od.get("items") or {}).items() if v}
+    name = first_name(od.get("name"))
+    lines = [f"Hi {name},", "",
+             "Thank you so much for ordering your Thanksgiving meal from Hearth Kitchen Co.! Your food will be delivered chilled on Wednesday, Nov 25. I'll text you your two-hour delivery window before Thanksgiving week.",
+             "", "Here's your personal reheating timeline, built from your exact order so everything comes out hot at the same time. Just count back from the time you want to eat.", ""]
+    if rows:
+        lines.append("YOUR THANKSGIVING DAY TIMELINE (oven at 350°F)")
+        for m, ts in rows:
+            lines.append(f"• {label(m)}:")
+            lines += [f"   – {t}" for t in ts]
+        lines.append("")
+    if plates:
+        lines += [f"PLATE FOR ONE{' ×'+str(plates) if plates > 1 else ''} (microwave only, never the oven)",
+                  "Lid off. Pour the gravy over the turkey and cover loosely. Microwave 2–3 minutes in short bursts, stirring the sides. Let stand 1 minute and check that it reaches 165°F. Start it about 5 minutes before you eat.", ""]
+    if pies:
+        lines += [f"PIE{'S' if len(pies) > 1 else ''}",
+                  "When you sit down to eat, take the pie out of the box and warm it in its tin at 350°F for 15–25 minutes." + (" Pumpkin is lovely chilled, too." if "Pumpkin Pie" in pies else ""), ""]
+    on = oven_note(items)
+    if on:
+        import re
+        lines += ["OVEN SPACE", re.sub(r"<[^>]+>", "", on).replace("Check your oven space: your", "Your"), ""]
+    lines += ["A FEW REMINDERS",
+              "• Keep everything at or below 40°F and enjoy within 72 hours.",
+              "• Foil pans go in the oven only, never the microwave.",
+              "• Don't heat the paper containers or the pie box.",
+              "• Always check that the center reaches 165°F before serving.", "",
+              "Each dish also comes with its own reheating card in your bag.", "",
+              "If you have any questions, just text me at 918-968-5002.", "",
+              "With love,", "Jordan", "Hearth Kitchen Co.",
+              "Nourishing your body starts with how you treat your food."]
+    return od.get("email", ""), "Your Thanksgiving reheating timeline from Hearth Kitchen Co.", "\n".join(lines)
+
+def emails(orders):
+    return [dict(zip(("to", "subject", "body"), email_for(od)), order_no=od.get("order_no")) for od in orders]
