@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Thanksgiving Pre-Order | Hearth Kitchen Co.</title>
+<meta name="description" content="Order Thanksgiving turkey, sides and pies from Hearth Kitchen Co., delivered across the Tulsa Metro on Wednesday, Nov 25.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Figtree:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="band"></div>
+<div class="wrap">
+<nav aria-label="Main">
+  <div class="logo"><a href="index.html">Hearth Kitchen Co.</a></div>
+  <ul>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#services">Services</a></li>
+    <li><a href="thanksgiving.html" aria-current="page">Thanksgiving</a></li>
+    <li><a href="index.html#inquire">Inquire</a></li>
+  </ul>
+</nav>
+
+<header class="page-head">
+  <div class="eyebrow">Hearth Kitchen Co.</div>
+  <h1>Thanksgiving Pre-Order</h1>
+  <p class="sub" style="margin:0">Homemade sides, turkey and pies, cooked in small batches and brought to your door the day before Thanksgiving. Pick what you need, pay ahead, and put your feet up.</p>
+  <div class="facts">
+    <div class="fact"><small>Order by</small><b>Saturday, Nov 14</b></div>
+    <div class="fact"><small>Delivered</small><b>Wednesday, Nov 25</b></div>
+    <div class="fact"><small>Pay</small><b>In full, to confirm</b></div>
+  </div>
+  <p class="callout">Everything arrives fully cooked in oven-safe pans, ready to reheat. Please list any food allergies in your notes, and I will do my best to adjust a dish when I know ahead of time.</p>
+</header>
+
+<main id="menu"></main>
+
+<section id="order">
+  <h2 class="sec">Delivery details</h2>
+  <p class="sub">Complimentary delivery across the Tulsa Metro on Wednesday, Nov 25, on orders of $150 or more. Orders under $150 have a $20 delivery fee. I will text you a two-hour delivery window before Thanksgiving week.</p>
+  <form id="f" action="https://formspree.io/f/FORMSPREE_ID" method="POST" data-thanks="Thank you! Your order is in. Jordan will send your invoice soon. Your order is confirmed once it's paid.">
+    <div class="row">
+      <label for="name">Your name<input id="name" name="name" autocomplete="name" required></label>
+      <label for="phone">Phone<input id="phone" name="phone" type="tel" autocomplete="tel" required></label>
+    </div>
+    <label for="email">Email (your invoice is sent here)<input id="email" name="email" type="email" autocomplete="email" required></label>
+    <label for="addr">Delivery address<input id="addr" name="address" autocomplete="street-address" required></label>
+    <label for="notes">Allergies or notes<textarea id="notes" name="notes" placeholder="Please list any food allergies."></textarea></label>
+    <input type="hidden" name="order" id="orderField">
+    <input type="hidden" name="_subject" value="New Thanksgiving pre-order">
+
+    <section class="sum" aria-live="polite">
+      <ul class="lines" id="lines"></ul>
+      <div><span>Items</span><span id="sub">$0.00</span></div>
+      <div><span>Delivery</span><span id="del">Complimentary</span></div>
+      <div class="tot"><span>Total before tax</span><span id="tot">$0.00</span></div>
+      <p id="minnote" style="margin:4px 0 0;color:var(--accent-ink);font-size:.9rem"></p>
+    </section>
+
+    <p class="callout"><b>How to pay.</b> After I receive your order I will email you an invoice with the total plus Oklahoma sales tax. Pay online by card, or by check or cash made out to Hearth Kitchen Co., LLC. Your order is confirmed once payment is received.</p>
+    <button class="btn" type="submit" id="go" disabled>Place my order</button>
+    <p id="sent" class="formmsg" hidden role="status"></p>
+  </form>
+</section>
+
+<footer>
+  <div>With love,</div>
+  <div class="sig">Jordan</div>
+  <div>Hearth Kitchen Co., LLC &middot; Broken Arrow, Oklahoma</div>
+  <div>918-968-5002 &middot; jordansrowlan@gmail.com</div>
+  <div class="tag">Nourishing your body starts with how you treat your food.</div>
+  <div class="policy"><a href="policies.html">Deposits &amp; cancellations</a> &middot; <a href="policies.html#privacy">Privacy</a></div>
+</footer>
+</div>
+
+<script>
+var DELIVERY_FEE = 20, MINIMUM = 150;
+var MENU = [
+  {course:"The main", note:"Cooked fully, sliced and ready to warm.", items:[
+    {id:"turkey", name:"Herb-Roasted Turkey Breast", desc:"About 4 lb boneless breast with butter, sage and thyme, sliced, with a cup of pan gravy.", size:"About 4 lb, serves 8 with leftovers", price:98}
+  ]},
+  {course:"Sides", note:"Each tray comes in an oven-safe pan. Portions are generous, so expect leftovers.", items:[
+    {id:"dressing", name:"Sage Stuffing", desc:"Cubed bread, butter, celery, onion and fresh sage.", size:"9x13 pan, serves 8", price:40},
+    {id:"gfdressing", name:"Gluten-Free Sage Stuffing", desc:"The same stuffing made with gluten-free bread. Made in a kitchen that also uses wheat, so please tell me about any severe allergy.", size:"8x8 pan, serves 4 to 6", price:31},
+    {id:"potatoes", name:"Mashed Potatoes", desc:"Russet potatoes whipped smooth with cream and butter.", size:"2-quart pan, serves 6 to 8", price:31},
+    {id:"greenbean", name:"Green Beans with Mushrooms and Crispy Shallots", desc:"Fresh green beans and sautéed mushrooms in a light, from-scratch sauce, topped with crispy shallots.", size:"2-quart pan, serves 6 to 8", price:40},
+    {id:"sweetpot", name:"Classic Sweet Potatoes", desc:"Whipped sweet potatoes with maple and brown butter, topped with toasted marshmallows and pecans.", size:"2-quart pan, serves 6 to 8", price:36},
+    {id:"sweetpotsf", name:"Brown Butter Sweet Potatoes (No Added Sugar)", desc:"Roasted sweet potatoes with brown butter, fresh sage, orange zest and toasted pecans. No added sugar.", size:"2-quart pan, serves 6 to 8", price:36},
+    {id:"mac", name:"Baked Three-Cheese Macaroni", desc:"Sharp cheddar, gruyere and a golden crumb top.", size:"2-quart pan, serves 6 to 8", price:42},
+    {id:"carrots", name:"Honey-Thyme Roasted Carrots", desc:"Whole carrots roasted until caramelized.", size:"1.5-quart pan, serves 6", price:30},
+    {id:"gravy", name:"Turkey Gravy", desc:"Rich, smooth and made from roasted turkey stock.", size:"1 quart, serves 8 to 10", price:17},
+    {id:"cranberry", name:"Orange Cranberry Relish", desc:"Fresh cranberries, orange zest and a little honey.", size:"1 pint, serves 8", price:15},
+    {id:"rolls", name:"Soft Dinner Rolls", desc:"Buttery pull-apart rolls, baked the day before.", size:"One dozen", price:20}
+  ]},
+  {course:"Pies", note:"Nine-inch pies, baked fresh on Tuesday.", items:[
+    {id:"pecan", name:"Pecan Pie", desc:"Toasted pecans in a brown sugar and vanilla filling.", size:"9 inch, serves 8", price:44},
+    {id:"pumpkin", name:"Pumpkin Pie", desc:"Silky pumpkin custard with warm spices.", size:"9 inch, serves 8", price:38},
+    {id:"apple", name:"Apple Crumble Pie", desc:"Tart and sweet apples under a buttery oat crumble.", size:"9 inch, serves 8", price:42}
+  ]}
+];
+var qty = {}, byId = {};
+MENU.forEach(function(c){c.items.forEach(function(i){byId[i.id]=i; qty[i.id]=0;});});
+function money(n){return "$"+n.toFixed(2);}
+function el(t,c,h){var e=document.createElement(t); if(c)e.className=c; if(h!=null)e.innerHTML=h; return e;}
+var menu = document.getElementById("menu");
+MENU.forEach(function(c){
+  var sec = el("section","course");
+  sec.appendChild(el("h2",null,c.course));
+  sec.appendChild(el("p","sub",c.note));
+  c.items.forEach(function(i){
+    var row = el("div","item"); row.id="row-"+i.id;
+    var left = el("div");
+    left.appendChild(el("h3",null,i.name));
+    left.appendChild(el("p",null,i.desc));
+    left.appendChild(el("div","meta",'<span class="price">'+money(i.price)+'</span><span>'+i.size+'</span>'));
+    var st = el("div","step");
+    var minus = el("button",null,"&minus;"); minus.type="button"; minus.setAttribute("aria-label","Remove one "+i.name);
+    var out = el("output",null,"0"); out.id="q-"+i.id;
+    var plus = el("button",null,"+"); plus.type="button"; plus.setAttribute("aria-label","Add one "+i.name);
+    minus.onclick=function(){ if(qty[i.id]>0){qty[i.id]--; update();} };
+    plus.onclick=function(){ if(qty[i.id]<20){qty[i.id]++; update();} };
+    st.appendChild(minus); st.appendChild(out); st.appendChild(plus);
+    row.appendChild(left); row.appendChild(st);
+    sec.appendChild(row);
+  });
+  menu.appendChild(sec);
+});
+function chosen(){ return Object.keys(qty).filter(function(k){return qty[k]>0;}).map(function(k){return {name:byId[k].name,qty:qty[k],price:byId[k].price};}); }
+function totals(){ var s=0; chosen().forEach(function(x){s+=x.qty*x.price;}); var d=(s>0&&s<MINIMUM)?DELIVERY_FEE:0; return {sub:s,del:d,tot:s+d}; }
+function valid(){ return chosen().length>0 && ["name","phone","email","addr"].every(function(f){return document.getElementById(f).value.trim();}); }
+function update(){
+  Object.keys(qty).forEach(function(k){
+    document.getElementById("q-"+k).textContent=qty[k];
+    document.getElementById("row-"+k).classList.toggle("on",qty[k]>0);
+  });
+  var t=totals(), ul=document.getElementById("lines"); ul.innerHTML="";
+  chosen().forEach(function(x){ ul.appendChild(el("li",null,"<span>"+x.qty+" &times; "+x.name+"</span><span>"+money(x.qty*x.price)+"</span>")); });
+  document.getElementById("sub").textContent=money(t.sub);
+  document.getElementById("del").textContent=t.del?money(t.del):"Complimentary";
+  document.getElementById("tot").textContent=money(t.tot);
+  document.getElementById("minnote").textContent=(t.sub>0&&t.sub<MINIMUM)?("Add "+money(MINIMUM-t.sub)+" more for complimentary delivery."):"";
+  document.getElementById("go").disabled=!valid();
+  var L=chosen().map(function(x){return x.qty+" x "+x.name+" = "+money(x.qty*x.price);});
+  L.push("Delivery: "+(t.del?money(t.del):"Complimentary"),"Total before tax: "+money(t.tot));
+  document.getElementById("orderField").value=L.join("\n");
+}
+["name","phone","email","addr"].forEach(function(f){document.getElementById(f).addEventListener("input",update);});
+var form=document.getElementById("f");
+form.afterSend=function(){ Object.keys(qty).forEach(function(k){qty[k]=0;}); update(); };
+update();
+</script>
+<script src="form.js"></script>
+</body>
+</html>
