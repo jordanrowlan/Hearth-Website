@@ -40,6 +40,28 @@ PLAN = {
  "Orange Cranberry Relish": [(0, "Set out the cranberry relish, served cold.")],
 }
 PIES = ["Pecan Pie", "Pumpkin Pie", "Apple Crumble Pie"]
+LARGE = {"Herb-Roasted Turkey Breast", "Sage Stuffing"}   # 9x13 pans
+SMALL = {"Gluten-Free Sage Stuffing", "Mashed Potatoes", "Green Beans with Mushrooms and Crispy Shallots", "Classic Sweet Potatoes",
+         "Brown Butter Sweet Potatoes (No Added Sugar)", "Baked Three-Cheese Macaroni", "Honey-Thyme Roasted Carrots", "Soft Dinner Rolls"}
+
+def oven_note(items):
+    big = sum(v for k, v in items.items() if k in LARGE)
+    small = sum(v for k, v in items.items() if k in SMALL)
+    total = big + small
+    if not total:
+        return ""
+    parts = []
+    if big: parts.append(f"{big} large 9x13 pan{'s' if big > 1 else ''}")
+    if small: parts.append(f"{small} smaller pan{'s' if small > 1 else ''}")
+    msg = (f"<p class='note oven'><b>Check your oven space:</b> your order has {total} foil pan{'s' if total > 1 else ''} "
+           f"({' and '.join(parts)}). On Wednesday night, slide the cold pans into your oven to make sure they fit with the door closed and room for air around them. ")
+    if total > 5:
+        msg += ("Most home ovens hold about 4–5 pans on two racks, so plan for two rounds: reheat the turkey and stuffing first and keep them covered "
+                "with foil while the sides heat (they stay hot about 20–30 minutes), or use a second oven. Switch the racks halfway so everything heats evenly.")
+    else:
+        msg += "Use two racks if you need to, and switch them halfway so everything heats evenly."
+    return msg + "</p>"
+
 PREP_LEAD = 45   # take food out of the fridge this long before the first dish goes in
 PREHEAT = 15     # preheat before the first dish goes in
 
@@ -87,6 +109,9 @@ def render(orders):
             extra.append(f"<p class='note'><b>Plate for One{' ×'+str(plates) if plates>1 else ''}:</b> microwave only. Lid off, pour the gravy over the turkey, cover loosely. Microwave 2–3 min in short bursts, stirring the sides. Stand 1 min, check 165°F. Start it about 5 minutes before you eat.</p>")
         if pies:
             extra.append(f"<p class='note'><b>Pie{'s' if len(pies)>1 else ''} ({', '.join(p.replace(' Pie','').replace('Apple Crumble','apple crumble').lower() for p in pies)}):</b> when you sit down to eat, take {'them' if len(pies)>1 else 'it'} out of the box and warm in the tin at 350°F for 15–25 min. {' Pumpkin is lovely chilled, too.' if 'Pumpkin Pie' in pies else ''}</p>")
+        on = oven_note({k: v for k, v in (od.get("items") or {}).items() if v})
+        if on:
+            extra.insert(0, on)
         if full:
             extra.append("<p class='note'>Your oven will be full, so I've started the dishes 15 minutes earlier. Check the centers before serving.</p>")
         table = f"<table><thead><tr><th>Before dinner</th><th>Your time</th><th>What to do</th></tr></thead><tbody>{trs}</tbody></table>" if rows else ""
