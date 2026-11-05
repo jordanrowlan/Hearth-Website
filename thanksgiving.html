@@ -4,112 +4,92 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Thanksgiving Pre-Order | Hearth Kitchen Co.</title>
-<meta name="description" content="Order Thanksgiving turkey, sides and pies from Hearth Kitchen Co., delivered across the Tulsa Metro on Wednesday, Nov 25.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Figtree:wght@400;500;600&display=swap">
+<meta name="description" content="Order Thanksgiving turkey, sides and pies from Chef Jordan, delivered free across the Tulsa Metro area on Wednesday, Nov 25.">
+<meta name="theme-color" content="#914117">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Figtree:wght@400;500;600&family=Pinyon+Script&display=swap">
 <link rel="stylesheet" href="style.css">
+
 </head>
 <body>
-<div class="band"></div>
+<a class="skip" href="#main">Skip to content</a>
 <div class="wrap">
-<nav aria-label="Main">
-  <div class="logo"><a href="index.html">Hearth Kitchen Co.</a></div>
-  <ul>
-    <li><a href="index.html#about">About</a></li>
-    <li><a href="index.html#services">Services</a></li>
-    <li><a href="thanksgiving.html" aria-current="page">Thanksgiving</a></li>
-    <li><a href="index.html#inquire">Inquire</a></li>
-  </ul>
-</nav>
-
-<header class="page-head">
-  <div class="eyebrow">Hearth Kitchen Co.</div>
-  <h1>Thanksgiving Pre-Order</h1>
-  <p class="sub" style="margin:0">Homemade sides, turkey and pies, cooked in small batches and brought to your door the day before Thanksgiving. Pick what you need, pay online, and put your feet up.</p>
-  <div class="facts">
-    <div class="fact"><small>Order by</small><b>Saturday, Nov 14</b></div>
-    <div class="fact"><small>Delivered</small><b>Wednesday, Nov 25</b></div>
-    <div class="fact"><small>Pay</small><b>Online, at checkout</b></div>
-  </div>
-  <p class="callout">Everything arrives fully cooked in oven-safe pans, ready to reheat. Please list any food allergies in your notes, and I will do my best to adjust a dish when I know ahead of time.</p>
+<header class="site-head">
+  <a class="brand" href="index.html" aria-label="Hearth Kitchen Co. home"><svg viewBox="0 0 120 92" role="img" aria-label="Hearth"><g transform="translate(0,0) scale(.62) translate(36,0)"><path d="M60 4c6 9 15 15 15 27 0 9-7 15-15 15s-15-6-15-15c0-6 3-10 6-13 0 5 3 8 6 8-3-8 0-16 3-22z" fill="currentColor"/></g><text x="60" y="66" text-anchor="middle" font-family="DM Serif Display, Georgia, serif" font-size="30" fill="currentColor">Hearth</text><line x1="30" y1="76" x2="90" y2="76" stroke="currentColor" stroke-width="1.4"/></svg></a>
+  <nav class="site-nav" aria-label="Main"><ul><li><a href="index.html">Home</a></li><li><a href="story.html">My Story</a></li><li><a href="thanksgiving.html" aria-current="page">Thanksgiving</a></li><li><a href="contact.html">Contact</a></li></ul></nav>
 </header>
+<main id="main">
 
-<main id="menu"></main>
-
-<section id="plate">
-  <h2 class="sec">Thanksgiving Plate for One</h2>
-  <p class="sub">Celebrating solo, or cooking for one this year? You still deserve the whole feast.</p>
-  <div class="callout" style="display:grid;gap:8px">
-    <b style="font-family:var(--display);font-weight:400;font-size:1.35rem">$39, delivery included</b>
-    <span>Herb-roasted turkey breast with gravy, your choice of any 3 sides from the menu above, and a soft dinner roll. Packed ready to reheat and delivered Wednesday, Nov 25.</span>
+<section class="stack" style="padding-top:12px">
+  <div class="label">Holiday menu</div>
+  <h1>Thanksgiving Pre-Order</h1>
+  <p class="lede">Homemade sides, turkey and pies, cooked in small batches and brought to your door the day before Thanksgiving. Pick what you need, pay ahead, and put your feet up.</p>
+  <div class="facts">
+    <div class="fact"><span class="label">Order by</span><b data-tg="orderByText">Saturday, Nov 14</b></div>
+    <div class="fact"><span class="label">Delivered</span><b data-tg="deliveryText">Wednesday, Nov 25</b></div>
+    <div class="fact"><span class="label">Delivery</span><b>Free, Tulsa Metro</b></div>
   </div>
-  <p style="margin:18px 0 0"><a class="btn" href="https://buy.stripe.com/test_eVq7sDbyqaq31zkcI18IU01">Order a Plate for One</a></p>
+  <div class="note card">
+    <img src="images/chef-jordan.jpg" width="900" height="1193" alt="Chef Jordan Rowlan of Hearth Kitchen Co., smiling in her Hearth chef coat.">
+    <div class="stack" style="gap:8px">
+      <p>All food is fully cooked and packed in oven-safe pans. You only need to reheat it. Please list any food allergies in the notes, and I will do my best to adjust a dish when I know ahead of time.</p>
+      <p>I plan the delivery route myself and will text you a two-hour delivery window before Thanksgiving week.</p>
+      <p class="signoff" style="font-size:1.7rem">With love, Jordan</p>
+    </div>
+  </div>
+  <div id="closed" class="closed" hidden><b>Thanksgiving orders are closed.</b> Thank you to everyone who ordered!</div>
 </section>
 
-<section id="order">
-  <h2 class="sec">Ready to order?</h2>
-  <p class="sub">Tap below to choose your dishes and pay securely by card, Apple Pay or Google Pay. Your cart starts with a classic Thanksgiving dinner, and you can change any quantity or add more.</p>
-  <div class="callout" style="display:grid;gap:6px">
-    <b>Free delivery across the Tulsa Metro on Wednesday, Nov 25.</b>
-    <span>Full Thanksgiving dinners start at $150 and are made to feed a crowd. Cooking for just yourself? The Plate for One above was made with you in mind.</span>
-    <span>Oklahoma sales tax is added at checkout. Orders close Saturday, Nov 14.</span>
-  </div>
-  <p style="margin:18px 0 0"><a class="btn" id="orderBtn" href="https://buy.stripe.com/test_28E6ozbyqcybcdY7nH8IU04">Order &amp; pay</a></p>
-  <p class="formnote" style="margin-top:12px">Questions or a special request? Text or call 918-968-5002.</p>
+<section id="menu" aria-label="Thanksgiving menu" style="padding-top:0"></section>
+
+<section class="panel stack" aria-labelledby="plate">
+  <div class="label">Just for you</div>
+  <h2 id="plate">Thanksgiving Plate for One</h2>
+  <p>Celebrating solo, or cooking for one this year? You still deserve the whole feast.</p>
+  <p><b><span data-tg="platePrice">$39</span>, delivery included.</b> Herb-roasted turkey breast with gravy, your choice of any 3 sides from the menu, and a soft dinner roll. Packed ready to reheat and delivered <span data-tg="deliveryText">Wednesday, Nov 25</span>.</p>
+  <p><a class="btn" data-order="plateLink" href="#">Order a Plate for One</a></p>
 </section>
 
-<footer>
-  <div>With love,</div>
-  <div class="sig">Jordan</div>
-  <div>Hearth Kitchen Co., LLC &middot; Broken Arrow, Oklahoma</div>
-  <div>918-968-5002 &middot; jordansrowlan@gmail.com</div>
-  <div class="tag">Nourishing your body starts with how you treat your food.</div>
-  <div class="policy"><a href="policies.html">Deposits &amp; cancellations</a> &middot; <a href="policies.html#privacy">Privacy</a></div>
-</footer>
+<section class="stack" aria-labelledby="order">
+  <h2 id="order">Ready to order?</h2>
+  <p>Tap below to choose your dishes and pay securely by card, Apple Pay or Google Pay. Your cart starts with a classic Thanksgiving dinner, and you can change any quantity or add more.</p>
+  <div class="panel stack" style="gap:6px;padding:20px">
+    <b>Free delivery across the Tulsa Metro area on <span data-tg="deliveryText">Wednesday, Nov 25</span>.</b>
+    <span>Full Thanksgiving dinners start at $<span data-tg="dinnersStartAt">150</span> and are made to feed a crowd. Cooking for just yourself? The Plate for One above was made with you in mind.</span>
+    <span>Oklahoma sales tax is added at checkout. Orders close <span data-tg="orderByText">Saturday, Nov 14</span>.</span>
+  </div>
+  <p><a class="btn" data-order="dinnerLink" href="#">Order &amp; pay</a></p>
+  <p class="formnote">Questions or a special request? Text or call 918-968-5002.</p>
+</section>
+
+</main>
 </div>
-
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="tagline">Nourishing your body starts with how you treat your food.</div>
+    <div>Serving the Tulsa Metro area</div>
+    <div><a href="mailto:jordansrowlan@gmail.com">jordansrowlan@gmail.com</a> &middot; <a href="tel:+19189685002">918-968-5002</a></div>
+    <div class="social" data-social></div>
+    <small><a href="policies.html">Policies</a> &middot; &copy; <span data-year>2026</span> Hearth Kitchen Co., LLC</small>
+  </div>
+</footer>
+<script src="data.js"></script>
+<script src="site.js"></script>
 <script>
-var MENU = [
-  {course:"The main", note:"Cooked fully, sliced and ready to warm.", items:[
-    {id:"turkey", name:"Herb-Roasted Turkey Breast", desc:"About 4 lb boneless breast with butter, sage and thyme, sliced, with a cup of pan gravy.", size:"About 4 lb, serves 8 with leftovers", price:98}
-  ]},
-  {course:"Sides", note:"Each tray comes in an oven-safe pan. Portions are generous, so expect leftovers.", items:[
-    {id:"dressing", name:"Sage Stuffing", desc:"Cubed bread, butter, celery, onion and fresh sage.", size:"9x13 pan, serves 8", price:40},
-    {id:"gfdressing", name:"Gluten-Free Sage Stuffing", desc:"The same stuffing made with gluten-free bread. Made in a kitchen that also uses wheat, so please tell me about any severe allergy.", size:"8x8 pan, serves 4 to 6", price:31},
-    {id:"potatoes", name:"Mashed Potatoes", desc:"Russet potatoes whipped smooth with cream and butter.", size:"2-quart pan, serves 6 to 8", price:31},
-    {id:"greenbean", name:"Green Beans with Mushrooms and Crispy Shallots", desc:"Fresh green beans and sautéed mushrooms in a light, from-scratch sauce, topped with crispy shallots.", size:"2-quart pan, serves 6 to 8", price:47},
-    {id:"sweetpot", name:"Classic Sweet Potatoes", desc:"Whipped sweet potatoes with maple and brown butter, topped with toasted marshmallows and pecans.", size:"2-quart pan, serves 6 to 8", price:36},
-    {id:"sweetpotsf", name:"Brown Butter Sweet Potatoes (No Added Sugar)", desc:"Roasted sweet potatoes with brown butter, fresh sage, orange zest and toasted pecans. No added sugar.", size:"2-quart pan, serves 6 to 8", price:36},
-    {id:"mac", name:"Baked Three-Cheese Macaroni", desc:"Sharp cheddar, gruyere and a golden crumb top.", size:"2-quart pan, serves 6 to 8", price:42},
-    {id:"carrots", name:"Honey-Thyme Roasted Carrots", desc:"Whole carrots roasted until caramelized.", size:"1.5-quart pan, serves 6", price:30},
-    {id:"gravy", name:"Turkey Gravy", desc:"Rich, smooth and made from roasted turkey stock.", size:"1 quart, serves 8 to 10", price:17},
-    {id:"cranberry", name:"Orange Cranberry Relish", desc:"Fresh cranberries, orange zest and a little honey.", size:"1 pint, serves 8", price:15},
-    {id:"rolls", name:"Soft Dinner Rolls", desc:"Buttery pull-apart rolls, baked the day before.", size:"One dozen", price:26}
-  ]},
-  {course:"Pies", note:"Nine-inch pies, baked fresh on Tuesday.", items:[
-    {id:"pecan", name:"Pecan Pie", desc:"Toasted pecans in a brown sugar and vanilla filling.", size:"9 inch, serves 8", price:46},
-    {id:"pumpkin", name:"Pumpkin Pie", desc:"Silky pumpkin custard with warm spices.", size:"9 inch, serves 8", price:40},
-    {id:"apple", name:"Apple Crumble Pie", desc:"Tart and sweet apples under a buttery oat crumble.", size:"9 inch, serves 8", price:46}
-  ]}
-];
-function money(n){return "$"+n.toFixed(2);}
-function el(t,c,h){var e=document.createElement(t); if(c)e.className=c; if(h!=null)e.innerHTML=h; return e;}
-var menu = document.getElementById("menu");
-MENU.forEach(function(c){
-  var sec = el("section","course");
-  sec.appendChild(el("h2",null,c.course));
-  sec.appendChild(el("p","sub",c.note));
-  c.items.forEach(function(i){
-    var row = el("div","item"); row.id="row-"+i.id;
-    var left = el("div");
-    left.appendChild(el("h3",null,i.name));
-    left.appendChild(el("p",null,i.desc));
-    left.appendChild(el("div","meta",'<span class="price">'+money(i.price)+'</span><span>'+i.size+'</span>'));
-    row.appendChild(left);
-    sec.appendChild(row);
+(function(){
+  var T=HEARTH.thanksgiving, m=document.getElementById("menu");
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];});}
+  m.innerHTML=T.menu.map(function(c){
+    return '<div class="course"><h2>'+esc(c.course)+'</h2><p class="formnote" style="margin:4px 0 8px">'+esc(c.note)+'</p>'+
+      c.items.map(function(i){return '<div class="item"><div><h3>'+esc(i.name)+'</h3><p class="desc">'+esc(i.desc)+'</p><p class="size">'+esc(i.size)+'</p></div><div class="price">$'+i.price+'</div></div>';}).join("")+'</div>';
+  }).join("");
+  document.querySelectorAll("[data-tg]").forEach(function(el){var k=el.dataset.tg;el.textContent=(k==="platePrice"?"$":"")+T[k];});
+  var closed=new Date()>new Date(T.orderBy);
+  document.querySelectorAll("[data-order]").forEach(function(a){
+    if(closed){a.setAttribute("aria-disabled","true");a.removeAttribute("href");a.textContent="Orders closed";}
+    else a.href=T[a.dataset.order];
   });
-  menu.appendChild(sec);
-});
+  if(closed) document.getElementById("closed").hidden=false;
+})();
 </script>
 </body>
 </html>
