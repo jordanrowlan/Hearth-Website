@@ -26,6 +26,9 @@ var HEARTH = {
     // Stripe checkout links (LIVE: real payments).
     dinnerLink: "https://buy.stripe.com/bJecMXbGC1553xO6NW0kE00",
     plateLink: "https://buy.stripe.com/cNi14faCy0113xO8W40kE01",
+    // Website cart: the checkout service that turns a cart into a Stripe checkout.
+    // Leave "" to use the plain checkout link above instead.
+    checkoutApi: "",
     platePrice: 39,
     // Delivery area: ZIP codes within about 20 miles of Broken Arrow.
     // Add or remove ZIPs here. Orders from other ZIPs see a "sorry" message instead of the order buttons.
@@ -44,25 +47,25 @@ var HEARTH = {
     dinnersStartAt: 150,
     menu: [
       { course: "The Main", note: "Cooked fully, sliced and ready to warm.", items: [
-        { name: "Herb-Roasted Turkey Breast", desc: "About 4 lb boneless breast with butter, sage and thyme, sliced, with a cup of pan gravy.", size: "About 4 lb, serves 8 with leftovers", price: 98 }
+        { key: "turkey", name: "Herb-Roasted Turkey Breast", desc: "About 4 lb boneless breast with butter, sage and thyme, sliced, with a cup of pan gravy.", size: "About 4 lb, serves 8 with leftovers", price: 98 }
       ]},
       { course: "Sides", note: "Each tray comes in an oven-safe pan. Portions are generous, so expect leftovers.", items: [
-        { name: "Sage Stuffing", desc: "Cubed bread, butter, celery, onion and fresh sage.", size: "9x13 pan, serves 8", price: 40 },
-        { name: "Gluten-Free Sage Stuffing", desc: "The same stuffing made with gluten-free bread. Made in a kitchen that also uses wheat, so please tell me about any severe allergy.", size: "8x8 pan, serves 4 to 6", price: 31 },
-        { name: "Mashed Potatoes", desc: "Russet potatoes whipped smooth with cream and butter.", size: "2-quart pan, serves 6 to 8", price: 31 },
-        { name: "Green Beans with Mushrooms and Crispy Shallots", desc: "Fresh green beans and sautéed mushrooms in a light, from-scratch sauce, topped with crispy shallots.", size: "2-quart pan, serves 6 to 8", price: 47 },
-        { name: "Classic Sweet Potatoes", desc: "Whipped sweet potatoes with maple and brown butter, topped with toasted marshmallows and pecans.", size: "2-quart pan, serves 6 to 8", price: 36 },
-        { name: "Brown Butter Sweet Potatoes (No Added Sugar)", desc: "Roasted sweet potatoes with brown butter, fresh sage, orange zest and toasted pecans.", size: "2-quart pan, serves 6 to 8", price: 36 },
-        { name: "Baked Three-Cheese Macaroni", desc: "Sharp cheddar, gruyère and a golden crumb top.", size: "2-quart pan, serves 6 to 8", price: 42 },
-        { name: "Honey-Thyme Roasted Carrots", desc: "Whole carrots roasted until caramelized.", size: "1.5-quart pan, serves 6", price: 30 },
-        { name: "Turkey Gravy", desc: "Rich, smooth and made from roasted turkey stock.", size: "1 quart, serves 8 to 10", price: 17 },
-        { name: "Orange Cranberry Relish", desc: "Fresh cranberries, orange zest and a little honey.", size: "1 pint, serves 8", price: 15 },
-        { name: "Soft Dinner Rolls", desc: "Buttery pull-apart rolls, baked the day before.", size: "One dozen", price: 26 }
+        { key: "stuffing", name: "Sage Stuffing", desc: "Cubed bread, butter, celery, onion and fresh sage.", size: "9x13 pan, serves 8", price: 40 },
+        { key: "gfstuffing", name: "Gluten-Free Sage Stuffing", desc: "The same stuffing made with gluten-free bread. Made in a kitchen that also uses wheat, so please tell me about any severe allergy.", size: "8x8 pan, serves 4 to 6", price: 31 },
+        { key: "potatoes", name: "Mashed Potatoes", desc: "Russet potatoes whipped smooth with cream and butter.", size: "2-quart pan, serves 6 to 8", price: 31 },
+        { key: "greenbeans", name: "Green Beans with Mushrooms and Crispy Shallots", desc: "Fresh green beans and sautéed mushrooms in a light, from-scratch sauce, topped with crispy shallots.", size: "2-quart pan, serves 6 to 8", price: 47 },
+        { key: "sweetpotatoes", name: "Classic Sweet Potatoes", desc: "Whipped sweet potatoes with maple and brown butter, topped with toasted marshmallows and pecans.", size: "2-quart pan, serves 6 to 8", price: 36 },
+        { key: "bbsweetpotatoes", name: "Brown Butter Sweet Potatoes (No Added Sugar)", desc: "Roasted sweet potatoes with brown butter, fresh sage, orange zest and toasted pecans.", size: "2-quart pan, serves 6 to 8", price: 36 },
+        { key: "mac", name: "Baked Three-Cheese Macaroni", desc: "Sharp cheddar, gruyère and a golden crumb top.", size: "2-quart pan, serves 6 to 8", price: 42 },
+        { key: "carrots", name: "Honey-Thyme Roasted Carrots", desc: "Whole carrots roasted until caramelized.", size: "1.5-quart pan, serves 6", price: 30 },
+        { key: "gravy", name: "Turkey Gravy", desc: "Rich, smooth and made from roasted turkey stock.", size: "1 quart, serves 8 to 10", price: 17 },
+        { key: "cranberry", name: "Orange Cranberry Relish", desc: "Fresh cranberries, orange zest and a little honey.", size: "1 pint, serves 8", price: 15 },
+        { key: "rolls", name: "Soft Dinner Rolls", desc: "Buttery pull-apart rolls, baked the day before.", size: "One dozen", price: 26 }
       ]},
       { course: "Pies", note: "Nine-inch pies, baked fresh on Tuesday.", items: [
-        { name: "Pecan Pie", desc: "Toasted pecans in a brown sugar and vanilla filling.", size: "9 inch, serves 8", price: 46 },
-        { name: "Pumpkin Pie", desc: "Silky pumpkin custard with warm spices.", size: "9 inch, serves 8", price: 40 },
-        { name: "Apple Crumble Pie", desc: "Tart and sweet apples under a buttery oat crumble.", size: "9 inch, serves 8", price: 46 }
+        { key: "pecan", name: "Pecan Pie", desc: "Toasted pecans in a brown sugar and vanilla filling.", size: "9 inch, serves 8", price: 46 },
+        { key: "pumpkin", name: "Pumpkin Pie", desc: "Silky pumpkin custard with warm spices.", size: "9 inch, serves 8", price: 40 },
+        { key: "apple", name: "Apple Crumble Pie", desc: "Tart and sweet apples under a buttery oat crumble.", size: "9 inch, serves 8", price: 46 }
       ]}
     ]
   }

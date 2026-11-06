@@ -23,6 +23,7 @@
 <section class="stack" style="padding-top:12px">
   <div class="label">Holiday menu</div>
   <h1>Thanksgiving Pre-Order</h1>
+  <div id="circlebanner" class="circle" hidden><b>Welcome, Inner Circle!</b> <span data-circle-label>Inner Circle 10% off</span> is applied to everything you add. You'll see your savings in your order total.</div>
   <p class="lede">Homemade sides, turkey and pies, cooked in small batches and brought to your door the day before Thanksgiving. Pick what you need, pay ahead, and put your feet up.</p>
   <div class="facts">
     <div class="fact"><span class="label">Order by</span><b data-tg="orderByText">Saturday, Nov 14</b></div>
@@ -62,16 +63,29 @@
 
 <section class="stack" aria-labelledby="order">
   <h2 id="order">Ready to order?</h2>
-  <p>Tap below to choose your dishes and pay securely by card, Apple Pay or Google Pay. <b>Everything is à la carte.</b> Your cart opens with a few favorites, so set any of them to 0 and add exactly what you want, from a single pie to the whole feast.</p>
+  <p data-cart-off>Tap below to choose your dishes and pay securely by card, Apple Pay or Google Pay. <b>Everything is à la carte.</b> Your cart opens with a few favorites, so set any of them to 0 and add exactly what you want, from a single pie to the whole feast.</p>
+  <p data-cart-on hidden><b>Everything is à la carte.</b> Tap <b>Add</b> on any dish above, from a single pie to the whole feast. Your order total follows you at the bottom of the screen, and you'll pay securely by card, Apple Pay or Google Pay.</p>
   <div class="panel stack" style="gap:6px;padding:20px">
     <b>Free delivery across the Tulsa Metro area on <span data-tg="deliveryText">Wednesday, Nov 25</span>.</b>
     <span>Order a single side or a whole feast. Cooking for just yourself? The Plate for One above was made with you in mind.</span>
     <span>Oklahoma sales tax is added at checkout. Orders close <span data-tg="orderByText">Saturday, Nov 14</span>.</span>
     <span>Not sure if you're in my delivery area? Text me at 918-968-5002 before ordering.</span>
   </div>
-  <p><a class="btn" data-order="dinnerLink" href="#">Order &amp; pay</a></p><p class="formnote" data-ziphint>Check your ZIP code above to order.</p>
+  <div data-cart-off><p><a class="btn" data-order="dinnerLink" href="#">Order &amp; pay</a></p><p class="formnote" data-ziphint>Check your ZIP code above to order.</p></div>
   <p class="formnote">Questions or a special request? Text or call 918-968-5002.</p>
 </section>
+
+<div id="cartbar" class="cartbar" hidden role="region" aria-label="Your order">
+  <div class="cb-in">
+    <div class="cb-sum">
+      <div><b id="cb-count">0 items</b> &middot; <span id="cb-sub">$0.00</span></div>
+      <div id="cb-circle" hidden><div class="cb-circle"><span data-circle-label>Inner Circle 10% off</span>: you save <b id="cb-off"></b></div><div>Your total: <b class="cb-total" id="cb-total"></b></div></div>
+      <div class="cb-note">Tax added at checkout &middot; Free delivery</div>
+      <div id="cb-err" class="cb-err" role="alert" hidden></div>
+    </div>
+    <button id="cb-go" class="btn" type="button">Checkout</button>
+  </div>
+</div>
 
 </main>
 </div>
@@ -88,35 +102,97 @@
 <script src="site.js"></script>
 <script>
 (function(){
-  var T=HEARTH.thanksgiving, m=document.getElementById("menu");
+  var T=HEARTH.thanksgiving, m=document.getElementById("menu"), API=T.checkoutApi||"";
+  var CART=!!API;
+  document.querySelectorAll("[data-cart-on]").forEach(function(e){e.hidden=!CART;});
+  document.querySelectorAll("[data-cart-off]").forEach(function(e){e.hidden=CART;});
   function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];});}
+  var byKey={}; T.menu.forEach(function(c){c.items.forEach(function(i){byKey[i.key]=i;});});
   m.innerHTML=T.menu.map(function(c){
     return '<div class="course"><h2>'+esc(c.course)+'</h2><p class="formnote" style="margin:4px 0 8px">'+esc(c.note)+'</p>'+
-      c.items.map(function(i){return '<div class="item"><div><h3>'+esc(i.name)+'</h3><p class="desc">'+esc(i.desc)+'</p><p class="size">'+esc(i.size)+'</p></div><div class="price">$'+i.price+'</div></div>';}).join("")+'</div>';
+      c.items.map(function(i){return '<div class="item"><div><h3>'+esc(i.name)+'</h3><p class="desc">'+esc(i.desc)+'</p><p class="size">'+esc(i.size)+'</p></div>'+
+        '<div class="buy"><div class="price">$'+i.price+'</div>'+(CART?'<div class="qty" data-key="'+i.key+'"></div>':'')+'</div></div>';}).join("")+'</div>';
   }).join("");
   document.querySelectorAll("[data-tg]").forEach(function(el){var k=el.dataset.tg;el.textContent=(k==="platePrice"?"$":"")+T[k];});
-  var closed=new Date()>new Date(T.orderBy), zipOk=false;
+  var closed=new Date()>new Date(T.orderBy), zipOk=false, circle=null, circleInfo=null;
+  var zf=document.getElementById("zipform"), zi=document.getElementById("zip"), zm=document.getElementById("zipmsg");
+
+  // ---------- cart ----------
+  var cart={};
+  try{cart=JSON.parse(localStorage.getItem("hearthCart")||"{}")||{};}catch(e){cart={};}
+  Object.keys(cart).forEach(function(k){if(!byKey[k]||!(cart[k]>0))delete cart[k];});
+  function save(){try{localStorage.setItem("hearthCart",JSON.stringify(cart));}catch(e){}}
+  function money(n){return "$"+n.toFixed(2);}
+  function totals(){var n=0,s=0;Object.keys(cart).forEach(function(k){n+=cart[k];s+=cart[k]*byKey[k].price;});
+    var off=circleInfo?Math.round(s*circleInfo.percent)/100:0;return {n:n,sub:s,off:off,total:s-off};}
+  function setQty(k,q){q=Math.max(0,Math.min(20,q));if(q)cart[k]=q;else delete cart[k];save();drawCart();}
+  function drawCart(){
+    if(!CART)return;
+    document.querySelectorAll(".qty").forEach(function(box){
+      var k=box.dataset.key,q=cart[k]||0,name=esc(byKey[k].name);
+      if(closed){box.innerHTML="";return;}
+      box.innerHTML=q?('<button type="button" class="qbtn" data-d="-1" aria-label="One less '+name+'">&minus;</button><span class="qn" aria-live="polite">'+q+'</span><button type="button" class="qbtn" data-d="1" aria-label="One more '+name+'">+</button>')
+        :('<button type="button" class="btn add" data-d="1" aria-label="Add '+name+'">Add</button>');
+    });
+    var t=totals(), bar=document.getElementById("cartbar");
+    bar.hidden=closed||!t.n; document.body.classList.toggle("has-cart",!bar.hidden);
+    document.getElementById("cb-count").textContent=t.n+(t.n===1?" item":" items");
+    document.getElementById("cb-sub").textContent=money(t.sub);
+    var cl=document.getElementById("cb-circle");
+    if(circleInfo&&t.n){cl.hidden=false;document.getElementById("cb-off").textContent=money(t.off);document.getElementById("cb-total").textContent=money(t.total);}
+    else cl.hidden=true;
+    document.getElementById("cb-sub").classList.toggle("struck",!!(circleInfo&&t.n));
+  }
+  m.addEventListener("click",function(e){var b=e.target.closest("button[data-d]");if(!b)return;var k=b.closest(".qty").dataset.key;
+    setQty(k,(cart[k]||0)+Number(b.dataset.d));var again=document.querySelector('.qty[data-key="'+k+'"] button');if(again&&!cart[k])again.focus();});
+
   function paint(){
     document.querySelectorAll("[data-order]").forEach(function(a){
       if(closed){a.setAttribute("aria-disabled","true");a.removeAttribute("href");a.textContent="Orders closed";}
       else if(!zipOk){a.setAttribute("aria-disabled","true");a.removeAttribute("href");}
-      else {a.removeAttribute("aria-disabled");a.href=T[a.dataset.order];}
+      else {a.removeAttribute("aria-disabled");a.href=(a.dataset.order==="plateLink"&&circleInfo)?circleInfo.plateLink:T[a.dataset.order];}
     });
     document.querySelectorAll("[data-ziphint]").forEach(function(h){h.hidden=closed||zipOk;});
   }
-  var zf=document.getElementById("zipform"), zi=document.getElementById("zip"), zm=document.getElementById("zipmsg");
   function check(z){
     z=(z||"").replace(/\D/g,"").slice(0,5);
     if(z.length<5){zm.hidden=false;zm.className="formmsg err";zm.textContent="Please enter a 5-digit ZIP code.";zipOk=false;paint();return;}
     zipOk=T.deliveryZips.indexOf(z)!==-1; zm.hidden=false;
-    if(zipOk){zm.className="formmsg ok";zm.textContent="Good news, I deliver to "+z+"! Your order buttons are ready below.";try{localStorage.setItem("hearthZip",z)}catch(e){}}
+    if(zipOk){zm.className="formmsg ok";zm.textContent=CART?"Good news, I deliver to "+z+"! Tap Add on any dish below.":"Good news, I deliver to "+z+"! Your order buttons are ready below.";try{localStorage.setItem("hearthZip",z)}catch(e){}}
     else{zm.className="formmsg err";zm.textContent="I'm so sorry, I only deliver within the Tulsa Metro area right now. Text me at 918-968-5002 and I'll see what I can do.";}
     paint();
   }
   zf.addEventListener("submit",function(e){e.preventDefault();check(zi.value);});
+
+  var go=document.getElementById("cb-go"), err=document.getElementById("cb-err");
+  if(go) go.addEventListener("click",function(){
+    err.hidden=true;
+    if(!zipOk){zf.scrollIntoView({behavior:"smooth",block:"center"});zm.hidden=false;zm.className="formmsg err";zm.textContent="Please check your delivery ZIP code first.";zi.focus({preventScroll:true});return;}
+    go.disabled=true;go.textContent="One moment…";
+    fetch(API+"/checkout",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({items:cart,circle:circle||undefined})})
+      .then(function(r){return r.json();})
+      .then(function(d){if(d.url){location.href=d.url;}else{throw new Error(d.error||"Checkout couldn't start.");}})
+      .catch(function(e){err.hidden=false;err.textContent=(e&&e.message&&e.message!=="Failed to fetch")?e.message:"Checkout couldn't start. Please text Jordan at 918-968-5002.";go.disabled=false;go.textContent="Checkout";});
+  });
+
+  // ---------- Inner Circle (private link only) ----------
+  function circleOn(info){
+    circleInfo=info;var b=document.getElementById("circlebanner");b.hidden=false;
+    b.querySelector("[data-circle-label]").textContent=info.label;drawCart();paint();
+  }
+  if(CART){
+    var qs=new URLSearchParams(location.search), tok=qs.get("circle");
+    if(tok){qs.delete("circle");history.replaceState(null,"",location.pathname+(qs.toString()?"?"+qs:"")+location.hash);}
+    else{try{tok=localStorage.getItem("hearthCircle");}catch(e){}}
+    if(tok){fetch(API+"/circle?t="+encodeURIComponent(tok)).then(function(r){return r.json();}).then(function(d){
+      if(d.ok){circle=tok;try{localStorage.setItem("hearthCircle",tok);}catch(e){}circleOn(d);}
+      else{try{localStorage.removeItem("hearthCircle");}catch(e){}}
+    }).catch(function(){});}
+  }
+
   if(closed) zf.hidden=true;
   try{var saved=localStorage.getItem("hearthZip");if(saved&&!closed){zi.value=saved;check(saved);}}catch(e){}
-  paint();
+  paint(); drawCart();
   if(closed) document.getElementById("closed").hidden=false;
 })();
 </script>

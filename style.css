@@ -156,3 +156,24 @@ textarea{min-height:110px;resize:vertical}
   .hero .portrait img{border-radius:140px 140px 16px 16px}
   .seal{width:64px;height:64px;left:-18px;bottom:14px}
 }
+
+/* Thanksgiving cart */
+[hidden]{display:none!important}
+.buy{display:grid;justify-items:end;align-content:start;gap:8px}
+.qty{display:flex;align-items:center;gap:6px}
+.btn.add{padding:8px 18px;font-size:.92rem}
+.qbtn{width:38px;height:38px;border-radius:50%;border:0;background:var(--panel);color:var(--accent);font:600 1.25rem/1 var(--body);cursor:pointer}
+.qbtn:hover{filter:brightness(.96)}
+.qn{min-width:1.6em;text-align:center;font-weight:600;font-variant-numeric:tabular-nums}
+.cartbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--surface);box-shadow:0 -6px 24px rgba(40,44,48,.16);border-top:1px solid var(--rule);padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
+.cb-in{max-width:1040px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.cb-sum{font-variant-numeric:tabular-nums;line-height:1.35;min-width:0}
+.cb-note{font-size:.8rem;color:var(--muted)}
+.cb-circle{color:var(--accent);font-size:.95rem}
+.cb-total{color:var(--head);font-size:1.05rem}
+.struck{text-decoration:line-through;color:var(--muted)}
+.cb-err{color:var(--accent);font-size:.85rem;font-weight:600;margin-top:2px}
+#cb-go{flex:none}
+body.has-cart{padding-bottom:120px}
+.circle{background:var(--surface);border-radius:14px;padding:14px 16px;box-shadow:inset 0 0 0 1.5px var(--accent);color:var(--ink)}
+.circle b{color:var(--accent)}
