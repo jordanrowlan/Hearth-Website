@@ -189,6 +189,8 @@ tg = '''
     <p id="zipmsg" role="status" hidden></p>
   </form>
   <div id="closed" class="closed" hidden><b>Thanksgiving orders are closed.</b> Thank you to everyone who ordered!</div>
+  <div id="soldout" class="closed" hidden><b>Thanksgiving is fully booked!</b> Thank you so much for the love. Text me at 918-968-5002 to join the waitlist in case a spot opens up.</div>
+  <div id="almostfull" class="circle" hidden><b>Only a few spots left!</b> My Thanksgiving kitchen is almost full, so order soon.</div>
 </section>
 
 <section id="menu" aria-label="Thanksgiving menu" style="padding-top:0"></section>
@@ -344,6 +346,14 @@ tg_js = r'''<script>
     }).catch(function(){});}
   }
 
+  if(CART&&!closed){
+    fetch(API+"/capacity").then(function(r){return r.json();}).then(function(d){
+      if(d.soldOut){closed=true;zf.hidden=true;document.getElementById("soldout").hidden=false;
+        document.querySelectorAll("[data-cart-on]").forEach(function(e){if(e.querySelector("#platesides"))e.hidden=true;});
+        drawCart();paint();document.querySelectorAll("[data-order]").forEach(function(a){a.textContent="Fully booked";});}
+      else if(d.almostFull){document.getElementById("almostfull").hidden=false;}
+    }).catch(function(){});
+  }
   if(closed) zf.hidden=true;
   try{var saved=localStorage.getItem("hearthZip");if(saved&&!closed){zi.value=saved;check(saved);}}catch(e){}
   paint(); drawCart();
