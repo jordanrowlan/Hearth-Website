@@ -106,7 +106,7 @@ def render(orders):
         trs = "".join(f"<tr><td class='when'>{html.escape(label(m))}</td><td class='clock'></td><td>{'<br>'.join(html.escape(t) for t in ts)}</td></tr>" for m, ts in rows)
         extra = []
         if plates:
-            extra.append(f"<p class='note'><b>Plate for One{' ×'+str(plates) if plates>1 else ''}:</b> microwave only. Everything reheats together in its container. Lid off, pour the gravy over the turkey, cover loosely. Microwave 3–4 min total in 1-minute bursts, stirring the sides between bursts. Stand 1 min, check 165°F. Start it about 5 minutes before you eat.</p>")
+            extra.append(f"<p class='note'><b>Plate for One{' ×'+str(plates) if plates>1 else ''}:</b> microwave only. Turkey and sides reheat together in their container. Lid off, pour the gravy over the turkey, cover loosely. Microwave 3–4 min total in 1-minute bursts, stirring the sides between bursts. Stand 1 min, check 165°F. Your roll is packed separately: warm it for 10–15 seconds at the end. Start it about 5 minutes before you eat.</p>")
         if pies:
             extra.append(f"<p class='note'><b>Pie{'s' if len(pies)>1 else ''} ({', '.join(p.replace(' Pie','').replace('Apple Crumble','apple crumble').lower() for p in pies)}):</b> when you sit down to eat, take {'them' if len(pies)>1 else 'it'} out of the box and warm in the tin at 350°F for 15–25 min. {' Pumpkin is lovely chilled, too.' if 'Pumpkin Pie' in pies else ''}</p>")
         on = oven_note({k: v for k, v in (od.get("items") or {}).items() if v})
@@ -170,7 +170,7 @@ def email_for(od):
         lines.append("")
     if plates:
         lines += [f"PLATE FOR ONE{' ×'+str(plates) if plates > 1 else ''} (microwave only, never the oven)",
-                  "Everything reheats together, right in its container. Lid off. Pour the gravy over the turkey and cover loosely. Microwave 3–4 minutes total in 1-minute bursts, stirring the sides between bursts. Let stand 1 minute and check that it reaches 165°F. Start it about 5 minutes before you eat.", ""]
+                  "The turkey and sides reheat together, right in their container. Lid off. Pour the gravy over the turkey and cover loosely. Microwave 3–4 minutes total in 1-minute bursts, stirring the sides between bursts. Let stand 1 minute and check that it reaches 165°F. Your roll is packed separately: warm it in the microwave for 10–15 seconds at the end. Start it about 5 minutes before you eat.", ""]
     if pies:
         lines += [f"PIE{'S' if len(pies) > 1 else ''}",
                   "When you sit down to eat, take the pie out of the box and warm it in its tin at 350°F for 15–25 minutes." + (" Pumpkin is lovely chilled, too." if "Pumpkin Pie" in pies else ""), ""]
