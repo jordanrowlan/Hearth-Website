@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Pay Your Invoice | Hearth Kitchen Co.</title>
+<meta name="description" content="Pay your Hearth Kitchen Co. invoice securely online by card, Apple Pay or Google Pay.">
+<meta name="theme-color" content="#914117">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Figtree:wght@400;500;600&family=Pinyon+Script&display=swap">
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="wrap">
+<header class="site-head">
+  <a class="brand" href="index.html" aria-label="Hearth Kitchen Co. home"><svg viewBox="0 0 120 92" role="img" aria-label="Hearth"><g transform="translate(0,0) scale(.62) translate(36,0)"><path d="M60 4c6 9 15 15 15 27 0 9-7 15-15 15s-15-6-15-15c0-6 3-10 6-13 0 5 3 8 6 8-3-8 0-16 3-22z" fill="currentColor"/></g><text x="60" y="66" text-anchor="middle" font-family="DM Serif Display, Georgia, serif" font-size="30" fill="currentColor">Hearth</text><line x1="30" y1="76" x2="90" y2="76" stroke="currentColor" stroke-width="1.4"/></svg></a>
+  <nav class="site-nav" aria-label="Main"><ul><li><a href="index.html">Home</a></li><li><a href="story.html">My Story</a></li><li><a href="thanksgiving.html">Thanksgiving</a></li><li><a href="contact.html">Contact</a></li><li><a href="pay.html" aria-current="page">Pay Invoice</a></li></ul></nav>
+</header>
+<main id="main">
+
+<section class="stack" style="padding-top:12px;max-width:720px">
+  <div class="label">Payments</div>
+  <h1>Pay your invoice</h1>
+  <p class="lede">Thank you for letting me cook for you. Paying is quick and secure, by card, Apple Pay or Google Pay.</p>
+  <div class="card stack">
+    <h2 style="font-size:1.4rem">The easiest way</h2>
+    <p>Open the invoice email from Hearth Kitchen Co. and tap <b>Pay this invoice</b>. Your amount, including tax, is already filled in.</p>
+  </div>
+  <div class="card stack">
+    <h2 style="font-size:1.4rem">Can't find the email?</h2>
+    <p>Pay here instead. You'll enter your <b>invoice number</b> (or your event date) and the <b>amount due</b> shown on your invoice, tax included.</p>
+    <p><a class="btn" data-pay href="#">Pay an invoice</a></p>
+  </div>
+  <p class="formnote">Paying by check or cash? Make it out to Hearth Kitchen Co., LLC. Questions about your invoice? Text me at 918-968-5002 and I'll resend it.</p>
+</section>
+
+</main>
+</div>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="tagline">Nourishing your body starts with how you treat your food.</div>
+    <div>Serving the Tulsa Metro area</div>
+    <div><a href="mailto:jordansrowlan@gmail.com">jordansrowlan@gmail.com</a> &middot; <a href="tel:+19189685002">918-968-5002</a></div>
+    <div class="social" data-social></div>
+    <small><a href="pay.html">Pay an invoice</a> &middot; <a href="policies.html">Policies</a> &middot; &copy; <span data-year>2026</span> Hearth Kitchen Co., LLC</small>
+  </div>
+</footer>
+<script src="data.js"></script>
+<script src="site.js"></script>
+<script>document.querySelectorAll("[data-pay]").forEach(function(a){a.href=HEARTH.invoicePayLink;});</script>
+</body>
+</html>
