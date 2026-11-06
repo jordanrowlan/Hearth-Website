@@ -23,9 +23,9 @@ var HEARTH = {
     orderBy: "2026-11-14T23:59:00-06:00",   // orders close (Central time)
     orderByText: "Saturday, Nov 14",
     deliveryText: "Wednesday, Nov 25",
-    // Stripe checkout links. These are TEST links until live mode is on.
-    dinnerLink: "https://buy.stripe.com/test_28E6ozbyqcybcdY7nH8IU04",
-    plateLink: "https://buy.stripe.com/test_eVq7sDbyqaq31zkcI18IU01",
+    // Stripe checkout links (LIVE: real payments).
+    dinnerLink: "https://buy.stripe.com/bJecMXbGC1553xO6NW0kE00",
+    plateLink: "https://buy.stripe.com/cNi14faCy0113xO8W40kE01",
     platePrice: 39,
     // Delivery area: ZIP codes within about 20 miles of Broken Arrow.
     // Add or remove ZIPs here. Orders from other ZIPs see a "sorry" message instead of the order buttons.
