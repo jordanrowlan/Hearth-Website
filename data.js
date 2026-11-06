@@ -28,7 +28,7 @@ var HEARTH = {
     plateLink: "https://buy.stripe.com/cNi14faCy0113xO8W40kE01",
     // Website cart: the checkout service that turns a cart into a Stripe checkout.
     // Leave "" to use the plain checkout link above instead.
-    checkoutApi: "",
+    checkoutApi: "https://hearth-checkout.jordansrowlan.workers.dev",
     platePrice: 39,
     // Sides a Plate for One can choose (3 per plate).
     plateSides: [
