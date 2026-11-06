@@ -197,7 +197,7 @@ tg = '''
   <div class="label">Just for you</div>
   <h2 id="plate">Thanksgiving Plate for One</h2>
   <p>Celebrating solo, or cooking for one this year? You still deserve the whole feast.</p>
-  <p><b><span data-tg="platePrice">$39</span>, delivery included.</b> Herb-roasted turkey breast with gravy, your choice of any 3 sides from the menu, and a soft dinner roll. Packed in a plant-based, PFAS-free container that reheats in the microwave, and delivered chilled <span data-tg="deliveryText">Wednesday, Nov 25</span>.</p>
+  <p><b><span data-tg="platePrice">$39</span>, delivery included.</b> About 6 oz of sliced herb-roasted turkey breast with gravy, your choice of any 3 sides from the menu, and a soft dinner roll. Packed in a plant-based, PFAS-free container that reheats in the microwave, and delivered chilled <span data-tg="deliveryText">Wednesday, Nov 25</span>.</p>
   <div data-cart-off><p><a class="btn" data-order="plateLink" href="#">Order a Plate for One</a></p><p class="formnote" data-ziphint>Check your ZIP code above to order.</p></div>
   <div data-cart-on hidden class="stack" style="gap:12px">
     <p style="margin:0"><b>Build your plate:</b> pick 3 sides, then tap Add plate. Ordering for more than one? Add as many plates as you like, each with its own sides.</p>

@@ -23,7 +23,7 @@ SHORT = ["Turkey","Sage Stuffing","GF Stuffing","Mashed Potatoes","Green Beans",
 SIDES = [d for d in DISHES if d not in ("Herb-Roasted Turkey Breast","Turkey Gravy","Soft Dinner Rolls","Pecan Pie","Pumpkin Pie","Apple Crumble Pie")]
 PER_PAN = {"Sage Stuffing":16,"Gluten-Free Sage Stuffing":6,"Mashed Potatoes":10,"Green Beans with Mushrooms and Crispy Shallots":10,
   "Classic Sweet Potatoes":10,"Brown Butter Sweet Potatoes (No Added Sugar)":10,"Baked Three-Cheese Macaroni":10,
-  "Honey-Thyme Roasted Carrots":8,"Orange Cranberry Relish":6,"Herb-Roasted Turkey Breast":10,"Turkey Gravy":12,"Soft Dinner Rolls":12}
+  "Honey-Thyme Roasted Carrots":8,"Orange Cranberry Relish":6,"Herb-Roasted Turkey Breast":9,"Turkey Gravy":12,"Soft Dinner Rolls":12}
 PKG = {"Herb-Roasted Turkey Breast":"9x13 pan + 8 oz gravy cup","Sage Stuffing":"9x13 pan","Gluten-Free Sage Stuffing":"8x8 pan",
   "Mashed Potatoes":"2-qt pan","Green Beans with Mushrooms and Crispy Shallots":"2-qt pan + shallot cup","Classic Sweet Potatoes":"2-qt pan",
   "Brown Butter Sweet Potatoes (No Added Sugar)":"2-qt pan","Baked Three-Cheese Macaroni":"2-qt pan","Honey-Thyme Roasted Carrots":"1.5-qt pan",
@@ -41,7 +41,7 @@ def build(orders, out, updated_note):
       ("This file is rebuilt from Stripe every evening, so you never type orders in. Edits you make here are not kept in the next rebuild,",{}),
       ("except: number your delivery stops by telling Claude the order, or fill the Stop # column on your own copy on delivery day.",{}),
       ("Prep List totals how many pans of each dish to cook (Plate for One portions are turned into pans). Delivery lists every stop.",{}),
-      ("",{}),("Plate portions per pan: stuffing 16 per 9x13, GF stuffing 6 per 8x8, 2-qt sides 10, carrots 8, cranberry 6 per pint, turkey 10 per breast, gravy 12 per quart, rolls 12 per dozen.",dict(color='595959')),
+      ("",{}),("Plate portions per pan: stuffing 16 per 9x13, GF stuffing 6 per 8x8, 2-qt sides 10, carrots 8, cranberry 6 per pint, turkey 9 per breast (6 oz each), gravy 12 per quart, rolls 12 per dozen.",dict(color='595959')),
       ("Private: this file holds customer names, phones and addresses. Don't share it.",dict(color='595959'))]
     for i,(t,k) in enumerate(lines,1):
         c=hw.cell(i,1,t); c.font=font(**k) if k else font(); c.alignment=Alignment(wrap_text=True,vertical='top')
