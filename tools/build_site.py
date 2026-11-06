@@ -105,7 +105,7 @@ home = f'''
     <h2 id="help">Let me bring the warmth back to your kitchen.</h2>
   </div>
   <div class="offer">
-    <article class="card stack"><h3>Weekly meal prep</h3><p>Dinner's done, waiting in your fridge, labeled and ready.</p><p><a href="contact.html">Ask about it</a></p></article>
+    <article class="card stack"><h3>Weekly meal prep</h3><p>Dinner's done, waiting in your fridge, labeled and ready. Add fresh wellness shots to start each morning bright.</p><p><a href="contact.html">Ask about it</a></p></article>
     <article class="card stack"><h3>Kitchen Reset</h3><p>A fresh start for your pantry and fridge, with glass containers to keep.</p><p><a href="contact.html">Ask about it</a></p></article>
     <article class="card stack"><h3>Dinners and gatherings</h3><p>Menus from around the world, built around your celebration.</p><p><a href="contact.html">Ask about it</a></p></article>
   </div>
@@ -378,7 +378,7 @@ contact = '''
     <label for="c-email">Email<input id="c-email" name="email" type="email" autocomplete="email" required></label>
     <label for="c-help">What can I help with?
       <select id="c-help" name="service">
-        <option>Kitchen Reset</option><option>Weekly meal prep</option><option>Event</option><option>Holiday menu</option><option>Other</option>
+        <option>Kitchen Reset</option><option>Weekly meal prep</option><option>Wellness shots</option><option>Event</option><option>Holiday menu</option><option>Other</option>
       </select>
     </label>
     <label for="c-msg">Message<textarea id="c-msg" name="message" placeholder="Who you're feeding, favorite foods, allergies, and the days that work for you."></textarea></label>
