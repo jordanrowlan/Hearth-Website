@@ -19,9 +19,6 @@ var HEARTH = {
   // Replace FORMSPREE_ID with the ID from formspree.io (looks like "abcdwxyz").
   formspree: "https://formspree.io/f/FORMSPREE_ID",
 
-  // Stripe checkout for paying an invoice (customer enters the amount due). TEST link until live mode is on.
-  invoicePayLink: "https://buy.stripe.com/test_3cI9AL1XQbu72Do7nH8IU05",
-
   thanksgiving: {
     orderBy: "2026-11-14T23:59:00-06:00",   // orders close (Central time)
     orderByText: "Saturday, Nov 14",
