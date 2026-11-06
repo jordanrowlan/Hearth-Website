@@ -30,6 +30,18 @@ var HEARTH = {
     // Leave "" to use the plain checkout link above instead.
     checkoutApi: "",
     platePrice: 39,
+    // Sides a Plate for One can choose (3 per plate).
+    plateSides: [
+      { key: "stuffing", name: "Sage Stuffing" },
+      { key: "gfstuffing", name: "Gluten-Free Sage Stuffing" },
+      { key: "potatoes", name: "Mashed Potatoes" },
+      { key: "greenbeans", name: "Green Beans with Mushrooms and Crispy Shallots" },
+      { key: "sweetpotatoes", name: "Classic Sweet Potatoes" },
+      { key: "bbsweetpotatoes", name: "Brown Butter Sweet Potatoes (No Added Sugar)" },
+      { key: "mac", name: "Baked Three-Cheese Macaroni" },
+      { key: "carrots", name: "Honey-Thyme Roasted Carrots" },
+      { key: "cranberry", name: "Orange Cranberry Relish" }
+    ],
     // Delivery area: ZIP codes within about 20 miles of Broken Arrow.
     // Add or remove ZIPs here. Orders from other ZIPs see a "sorry" message instead of the order buttons.
     deliveryZips: [

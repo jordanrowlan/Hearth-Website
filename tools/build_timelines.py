@@ -72,7 +72,7 @@ def label(m):
 
 def timeline(order):
     items = {k: v for k, v in (order.get("items") or {}).items() if v}
-    plates = order.get("plates") or 0
+    plates = order.get("plates") or len(order.get("plate_list") or [])
     pans = sum(v for k, v in items.items() if k in PLAN and k not in ("Turkey Gravy", "Orange Cranberry Relish"))
     full = pans >= 6 or any(v > 1 for k, v in items.items() if k in PLAN and k not in ("Turkey Gravy", "Orange Cranberry Relish", "Soft Dinner Rolls"))
     extra = 15 if full else 0

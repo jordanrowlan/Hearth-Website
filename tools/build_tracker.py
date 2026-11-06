@@ -5,6 +5,8 @@ Usage: python3 build_tracker.py orders.json output.xlsx
 orders.json is a list of objects with these keys (pulled from Stripe checkout sessions):
   order_no, date ("YYYY-MM-DD"), name, phone, email, address, notes,
   paid ("Yes"/"No"), items {dish name: quantity}, plates (int), sides [s1, s2, s3], total (dollars)
+  Website-cart orders may instead give plate_list [[s1, s2, s3], ...], one entry per plate
+  (each plate can have different sides); plates and sides are then worked out from it.
 Dish names must match DISHES below. Never commit order data to the repo.
 """
 import sys, json, datetime, openpyxl
@@ -51,11 +53,26 @@ def build(orders, out, updated_note):
     for j,h in enumerate(hdr,1):
         c=o.cell(4,j,h); c.font=font(bold=True,color='FFFFFF'); c.fill=H; c.alignment=Alignment(wrap_text=True,vertical='center',horizontal='center')
     o.row_dimensions[4].height=42
-    FIRST=5; LAST=max(FIRST+len(orders)+49, 154)
+    # Orders whose plates have different sides get one extra row per extra side combination.
+    rows=[]
+    for od in orders:
+        pl=od.get("plate_list")
+        if not pl:
+            rows.append(od); continue
+        groups=[]
+        for s in pl:
+            for g in groups:
+                if g[0]==list(s): g[1]+=1; break
+            else: groups.append([list(s),1])
+        od["plates"]=len(pl)
+        rows.append(dict(od,plates=groups[0][1],sides=groups[0][0]))
+        for s,n in groups[1:]:
+            rows.append({"order_no":f'{od.get("order_no")} (more plates)',"paid":"","plates":n,"sides":s,"items":{}})
+    FIRST=5; LAST=max(FIRST+len(rows)+49, 154)
     for r in range(FIRST,LAST+1):
         for j in range(1,len(hdr)+1): o.cell(r,j).border=Border(bottom=thin); o.cell(r,j).font=font()
         o.cell(r,9).fill=YEL; o.cell(r,2).number_format='mmm d'; o.cell(r,len(hdr)).number_format='"$"#,##0.00'
-    for i,od in enumerate(orders):
+    for i,od in enumerate(rows):
         r=FIRST+i; items=od.get("items",{}); sides=(od.get("sides") or [])+[None,None,None]
         d=od.get("date"); d=datetime.date.fromisoformat(d) if d else None
         row=[od.get("order_no"),d,od.get("name"),od.get("phone"),od.get("email"),od.get("address"),od.get("notes"),od.get("paid","Yes"),None]+\
