@@ -1,0 +1,924 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Find Your Hearth Plan | Hearth Kitchen Co.</title>
+<meta name="description" content="A few gentle questions, and Chef Jordan will put together an in-home meal prep plan made for your home in the Tulsa Metro area.">
+<meta name="theme-color" content="#914117">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=Poppins:wght@300;400;500&display=swap">
+<style>
+/* Layout: one centered recipe-card column; one question at a time, then a result card */
+:root {
+  --bg: #F7F1E7;
+  --card: #FFFDF9;
+  --fg: #2E2B28;
+  --muted: #5E5850;
+  --line: #E3D6C2;
+  --terra: #914117;
+  --terra-soft: #F3E3D6;
+  --olive: #4E5D33;
+  --gold: #B8924A;
+  --on-terra: #FFFFFF;
+  --paper: #FBF5EA;
+  --display: 'Lora', Georgia, 'Times New Roman', serif;
+  --body: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1E1D19; --card: #2A2823; --fg: #F2EBDF; --muted: #C2B8A8; --line: #45403A;
+    --terra: #E08A5C; --terra-soft: #3D2A20; --olive: #A9B98A; --gold: #D2B06E; --on-terra: #1E1D19; --paper: #24221D;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1E1D19; --card: #2A2823; --fg: #F2EBDF; --muted: #C2B8A8; --line: #45403A;
+  --terra: #E08A5C; --terra-soft: #3D2A20; --olive: #A9B98A; --gold: #D2B06E; --on-terra: #1E1D19; --paper: #24221D;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 56px;
+}
+.wrap { max-width: 580px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+.brand { display: flex; align-items: baseline; gap: 10px; }
+.brand .name { font-family: var(--display); font-size: 30px; color: var(--terra); line-height: 1; }
+.brand .co { font-size: 10px; letter-spacing: 3px; color: var(--olive); }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 28px clamp(20px, 5vw, 36px); display: flex; flex-direction: column; gap: 20px; }
+.progress { height: 4px; border-radius: 2px; background: var(--line); overflow: hidden; }
+.progress span { display: block; height: 100%; background: var(--gold); border-radius: 2px; transition: width .3s ease; }
+@media (prefers-reduced-motion: reduce) { .progress span { transition: none; } }
+.eyebrow { font-size: 11px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--olive); margin: 0; }
+h1, h2 { font-family: var(--display); font-weight: 500; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(26px, 6vw, 34px); line-height: 1.15; }
+h2 { font-size: 22px; line-height: 1.25; }
+.lede { margin: 0; color: var(--muted); }
+.options { display: flex; flex-direction: column; gap: 10px; }
+.opt {
+  font: inherit; color: inherit; text-align: left; cursor: pointer;
+  background: transparent; border: 1px solid var(--line); border-radius: 10px;
+  padding: 14px 16px; display: flex; flex-direction: column; gap: 2px; min-height: 44px;
+  transition: border-color .15s, background .15s;
+}
+.opt:hover { border-color: var(--terra); }
+.opt[aria-pressed="true"] { border-color: var(--terra); background: var(--terra-soft); }
+.opt strong { font-weight: 500; }
+.opt small { color: var(--muted); font-size: 13px; }
+.people { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.people .opt { align-items: center; text-align: center; padding: 14px 8px; }
+.people .opt strong { font-family: var(--display); font-size: 22px; font-weight: 500; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips .opt { flex-direction: row; align-items: center; padding: 10px 14px; border-radius: 999px; }
+.counter { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.counter:first-child { border-top: 1px solid var(--line); }
+.counter .who strong { display: block; font-weight: 500; }
+.counter .who small { color: var(--muted); font-size: 13px; }
+.stepper { display: flex; align-items: center; gap: 12px; }
+.stepper button { font: inherit; font-size: 20px; line-height: 1; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--terra); background: transparent; color: var(--terra); cursor: pointer; }
+.stepper button:disabled { opacity: .35; cursor: not-allowed; }
+.stepper output { font-family: var(--display); font-size: 24px; min-width: 24px; text-align: center; font-variant-numeric: tabular-nums; }
+.ages { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+.ages label, .field label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); }
+select, textarea, input[type="text"], input[type="email"], input[type="tel"] { font: inherit; color: var(--fg); background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; min-height: 44px; width: 100%; }
+textarea { min-height: 84px; resize: vertical; }
+select:focus-visible, textarea:focus-visible, input[type="text"]:focus-visible, input[type="email"]:focus-visible, input[type="tel"]:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.warn { margin: 0; font-size: 13px; color: var(--terra); }
+.nav { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.btn {
+  font: inherit; font-weight: 500; cursor: pointer; border-radius: 999px; min-height: 44px;
+  padding: 10px 22px; border: 1px solid var(--terra); background: var(--terra); color: var(--on-terra);
+}
+.btn.ghost { background: transparent; color: var(--terra); }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.result-head { display: flex; flex-direction: column; gap: 6px; }
+.plan-name { font-family: var(--display); font-size: clamp(34px, 8vw, 44px); color: var(--terra); line-height: 1.05; }
+.serve { margin: 4px 0 0; font-family: var(--display); font-style: italic; font-size: 16px; color: var(--olive); }
+.shared { display: grid; gap: 14px; }
+.shared dl { margin: 0; border-left: 2px solid var(--gold); padding-left: 14px; display: grid; gap: 8px; font-size: 14px; }
+.shared dl div { display: grid; grid-template-columns: 132px minmax(0, 1fr); gap: 10px; }
+.shared dt { color: var(--muted); }
+.shared dd { margin: 0; overflow-wrap: anywhere; }
+@media (max-width: 460px) { .shared dl div { grid-template-columns: minmax(0, 1fr); gap: 0; } }
+.table-sum { display: grid; gap: 4px; font-size: 14px; border-left: 2px solid var(--gold); padding-left: 14px; }
+.table-sum p { margin: 0; }
+.table-sum .k { color: var(--muted); }
+.rows { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+.row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.row span:first-child { min-width: 0; }
+.row .amt { font-family: var(--display); font-size: 20px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.row .sub { display: block; font-size: 12.5px; color: var(--muted); }
+.note { margin: 0; font-size: 13px; color: var(--muted); }
+.includes { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; font-size: 14px; }
+.includes li { display: flex; gap: 10px; align-items: flex-start; }
+.includes svg { flex: none; margin-top: 4px; }
+.share { margin-top: 22px; border-top: 1px solid var(--line); padding-top: 18px; display: flex; flex-direction: column; gap: 10px; }
+.share h3 { margin: 0; font-family: var(--display); font-weight: 500; font-size: 20px; }
+.share p { margin: 0; font-size: 14px; }
+.contact { background: var(--terra-soft); border-radius: 10px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+.contact p { margin: 0; }
+.contact-line { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.contact-line span { user-select: all; font-weight: 500; overflow-wrap: anywhere; min-width: 0; }
+.copy { font: inherit; font-size: 13px; cursor: pointer; background: transparent; color: var(--terra); border: 1px solid var(--terra); border-radius: 999px; padding: 6px 14px; min-height: 36px; }
+.letter { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 22px clamp(18px, 4vw, 28px); display: flex; flex-direction: column; gap: 12px; font-family: var(--display); font-size: 16.5px; line-height: 1.65; }
+.letter p { margin: 0; }
+.letter .dear { font-style: italic; font-size: 18px; color: var(--terra); }
+.letter .sign { font-style: italic; font-size: 18px; color: var(--terra); text-align: right; }
+.rhythm { display: flex; flex-direction: column; }
+.beat { display: grid; grid-template-columns: 128px minmax(0, 1fr); gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.beat:first-child { border-top: 1px solid var(--line); }
+.beat .when { font-size: 11px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--olive); padding-top: 2px; }
+@media (max-width: 460px) { .beat { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
+.details { display: flex; flex-direction: column; gap: 14px; }
+.detail { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px 16px; margin: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.detail legend { padding: 0 6px; font-family: var(--display); font-size: 17px; color: var(--terra); }
+.days { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
+.day { font: inherit; color: inherit; cursor: pointer; background: transparent; border: 1px solid var(--line); border-radius: 10px; min-height: 48px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; text-align: left; }
+.day:hover { border-color: var(--terra); }
+.day[aria-pressed="true"] { border-color: var(--terra); background: var(--terra-soft); }
+.day .rank { flex: none; width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font-family: var(--display); font-size: 15px; color: var(--terra); }
+.day[aria-pressed="true"] .rank { background: var(--terra); border-color: var(--terra); color: var(--on-terra); }
+.hint { color: var(--muted); font-size: 12.5px; }
+input[type="date"] { font: inherit; color: var(--fg); background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; min-height: 44px; width: 100%; }
+.send { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.sel { user-select: all; color: var(--fg); font-weight: 500; overflow-wrap: anywhere; }
+.send .btn { text-decoration: none; display: inline-flex; align-items: center; }
+.aside { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; font-size: 14px; }
+.aside p { margin: 0; }
+.row.total { border-bottom: none; }
+.row.sub span:first-child { font-weight: 500; }
+.row.total span:first-child { font-weight: 500; }
+.row.total .amt { color: var(--terra); font-size: 24px; }
+.also { display: grid; gap: 12px; }
+.also > div { display: grid; gap: 2px; font-size: 14px; }
+.also .k { font-size: 11px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--olive); }
+.also p { margin: 0; color: var(--fg); }
+.also strong { font-weight: 500; }
+.plantext { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 13px/1.5 var(--body); background: var(--card); color: var(--fg); border: 1px solid var(--line); border-radius: 8px; padding: 12px; max-height: 320px; overflow: auto; user-select: all; }
+.allin { background: var(--terra-soft); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 2px; }
+.allin-num { font-family: var(--display); font-size: clamp(30px, 8vw, 38px); color: var(--terra); line-height: 1.1; }
+.allin-per { font-size: 14px; color: var(--muted); }
+.allin p { margin: 8px 0 0; font-size: 14px; }
+.when-h { margin: 0; font-family: var(--display); font-weight: 500; font-size: 18px; }
+.paywhen { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.paywhen li { display: grid; grid-template-columns: 112px minmax(0, 1fr) auto; gap: 4px 12px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.pw-when { font-size: 11px; letter-spacing: 1.3px; text-transform: uppercase; color: var(--olive); }
+.pw-amt { font-family: var(--display); font-size: 17px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+@media (max-width: 460px) { .paywhen li { grid-template-columns: minmax(0, 1fr) auto; } .pw-when { grid-column: 1 / -1; } }
+.reset { margin-top: 18px; border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; background: var(--card); }
+.reset-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.reset-head h3 { margin: 0; font-family: var(--display); font-weight: 500; font-size: 22px; }
+.reset-amt { font-family: var(--display); font-size: 22px; color: var(--terra); text-align: right; }
+.reset-amt span { display: block; font-family: inherit; font-size: 12px; color: var(--muted); }
+.reset-lede { margin: 4px 0 6px; font-size: 14px; color: var(--muted); }
+.reset h4 { margin: 14px 0 4px; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--olive, #3E4A33); font-weight: 500; }
+.reset-list { list-style: none; margin: 0; padding: 0; }
+.reset-list li { padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 14px; line-height: 1.5; }
+.reset-list li:last-child { border-bottom: 0; }
+.reset-list strong { display: block; font-weight: 500; }
+.reset-list span { color: var(--muted); }
+.reset .note { margin-top: 10px; }
+.more summary { cursor: pointer; color: var(--terra); font-weight: 500; font-size: 14px; min-height: 44px; display: flex; align-items: center; }
+.more .rows { margin-top: 4px; }
+.more .note { margin-top: 10px; }
+.foot { text-align: center; font-family: var(--display); font-style: italic; color: var(--terra); margin: 0; }
+@media (prefers-reduced-motion: reduce) { .opt { transition: none; } }
+[hidden] { display: none !important; }
+.sitebar { max-width: 580px; margin: 0 auto 8px; display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: flex-end; font-size: 13px; }
+.sitebar a { color: var(--muted); text-decoration: none; }
+.sitebar a:hover { color: var(--terra); text-decoration: underline; }
+.brand { text-decoration: none; }
+</style>
+</head>
+<body>
+<nav class="sitebar" aria-label="Hearth Kitchen Co."><a href="index.html">Home</a><a href="story.html">My Story</a><a href="thanksgiving.html">Thanksgiving</a><a href="contact.html">Contact</a></nav>
+
+<div class="wrap">
+  <a class="brand" href="index.html" aria-label="Hearth Kitchen Co. home"><span class="name">Hearth</span><span class="co">KITCHEN CO.</span></a>
+  <div class="card" id="card" aria-live="polite"></div>
+  <p class="foot">Nourishing your body starts with how you treat your food.</p>
+</div>
+
+<script>
+var TIERS = {
+  taste: { name: 'A Taste of Hearth', meals: 'Dinner, 5 days a week', blurb: 'An easy first step into eating well: five nourishing dinners waiting in your fridge each week.', price: [550, 700, 150], groc: 375, batch: 5, preps: 1 },
+  gather: { name: 'Gather', meals: 'Breakfast, lunch and dinner, 5 days a week', blurb: 'Your weekday meals, handled, with room left for nights out with the people you love.', price: [895, 1100, 200], groc: 540, batch: 9, preps: 2 },
+  harvest: { name: 'Full Harvest', meals: 'Breakfast, lunch and dinner, every day of the week', blurb: 'Every meal, every day. Nothing left to think about but the table.', price: [975, 1200, 225], groc: 650, batch: 12, preps: 2 }
+};
+var SEASONS = [
+  ['empty', 'The nest is empty', 'The kids have flown, and it’s finally time for us'],
+  ['full', 'A full, busy house', 'Every day is full, and dinner is one more thing on the list'],
+  ['solo', 'Cooking for one', 'I want to eat well, without the shopping and cleanup'],
+  ['new', 'A new chapter', 'A move, a new baby, recovery, or a big life change'],
+  ['savor', 'Slowing down to savor', 'Retirement, travel, and more time at the table']
+];
+var DIETS = [
+  ['gf', 'Gluten-free'], ['sodium', 'Low sodium'], ['sugar', 'Sugar-free'], ['df', 'Dairy-free'], ['veg', 'Vegetarian'],
+  ['nut', 'Peanut or tree nut allergy'], ['fish', 'Fish or shellfish allergy'], ['egg', 'Egg allergy'], ['soy', 'Soy allergy'], ['other', 'Something else'], ['none', 'None of these']
+];
+var DETAIL_HINT = {
+  gf: 'For example: no wheat, barley or rye; celiac, so no shared crumbs',
+  sodium: 'For example: doctor recommends under 1,500 mg a day',
+  sugar: 'For example: no added sugar; honey and fruit are fine',
+  df: 'For example: no milk, butter or cheese; ghee is okay',
+  veg: 'For example: no meat or fish; eggs and dairy are fine',
+  nut: 'For example: cashews and almonds; carries an EpiPen',
+  fish: 'For example: shrimp only, or all seafood',
+  egg: 'For example: no eggs, including in baking',
+  soy: 'For example: no soy sauce, tofu or soy lecithin',
+  other: 'Tell me what to avoid and why'
+};
+var WEEK = ['Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+var ADD = { bread: 40, sweet: 35, little: 25, earth: 100, third: 100 };
+// Kitchen Reset: about 4 hours of reset time ($220) + starter pantry ($80) + glassware, rounded up to $25, then +$25 for the tailored pantry (now $110)
+var RESET_BASE = 300, PANTRY_UPGRADE = 25, CONTAINER = 3.75, SHOT_BOTTLE = 45.52 / 80, SHOTS_PER_PERSON = 7;
+
+function fresh() {
+  return { i: 0, name: '', family: '', birthday: '', email: '', phone: '', hp: '', sendStatus: '', sentSummary: '', season: null, plan: null, people: null, adults: 1, children: 0, ages: [],
+    style: null, fridge: null, diet: {}, detail: {}, bread: false, sweet: false, none: false, little: [], earth: null,
+    days: [], access: null, drop: null, pets: null, accessNote: '' };
+}
+var state = fresh();
+var card = document.getElementById('card');
+
+function headCount() { return state.people > 1 ? state.adults + state.children : 1; }
+function bigHarvest() { return state.plan === 'harvest' && headCount() >= 5; }
+function styleOf() { return headCount() === 1 ? 'single' : state.style; }
+function thirdPrep() { return bigHarvest() && state.style === 'single' && state.fridge === 'no'; }
+function chosenDiets() { return DIETS.filter(function (d) { return d[0] !== 'none' && state.diet[d[0]]; }); }
+function det(k) { if (!state.detail[k]) state.detail[k] = { who: '', what: '' }; return state.detail[k]; }
+function littleCount() { return state.little.filter(Boolean).length; }
+
+function steps() {
+  var s = ['name', 'season', 'meals', 'people'];
+  if (state.people > 1) s.push('table', 'style');
+  s.push('diet');
+  if (chosenDiets().length) s.push('dietDetail');
+  if (!state.diet.gf) s.push('extras');
+  if (state.people > 1 && state.children > 0) s.push('little');
+  if (state.plan !== 'harvest') s.push('earth');
+  s.push('days', 'access', 'result');
+  return s;
+}
+var SECTION = { name: 'About you', season: 'Your season', meals: 'Your meals', people: 'Your table', table: 'Your table', style: 'How you eat', diet: 'Dietary needs', dietDetail: 'Dietary needs', extras: 'Homemade extras', little: 'Little Plates', earth: 'Waste less', days: 'Your schedule', access: 'Getting in' };
+
+function weekly() { var t = TIERS[state.plan].price, n = headCount(); return n <= 1 ? t[0] : t[1] + (n - 2) * t[2]; }
+function groceries() { return TIERS[state.plan].groc * headCount(); }
+function groceriesWeekly() { return Math.ceil((groceries() * 12 / 52) / 5) * 5; }
+function glassCounts() {
+  var n = headCount(), batch = TIERS[state.plan].batch;
+  if (thirdPrep()) batch = 8;
+  var fam = styleOf() === 'family';
+  return { family: fam, dishes: fam ? batch + 2 : 0, singles: fam ? (batch + 2) * littleCount() : (batch + 2) * n, shots: SHOTS_PER_PERSON * n };
+}
+function resetFee() {
+  var n = headCount(), g = glassCounts();
+  var glass = g.dishes * (n <= 3 ? 9 : 12) + g.singles * CONTAINER;
+  glass += g.shots * SHOT_BOTTLE;
+  return Math.ceil((RESET_BASE + glass) / 25) * 25 + PANTRY_UPGRADE;
+}
+function addons() {
+  var a = [];
+  if (state.bread) a.push(['Fresh sourdough', 'One or two loaves a week from your own sourdough mother', ADD.bread]);
+  if (state.sweet) a.push(['A little something sweet', 'One homemade treat for your week' + treatNote(), ADD.sweet]);
+  var lc = littleCount();
+  if (lc) a.push(['Little Plates', lc + (lc === 1 ? ' child' : ' children') + ', kid-friendly single servings', ADD.little * lc]);
+  if (state.plan === 'harvest') a.push(['Earth in Every Hearth', 'Zero-waste care, included with Full Harvest', 0]);
+  else if (state.earth === 'yes') a.push(['Earth in Every Hearth', 'Zero-waste care for your home', ADD.earth]);
+  if (thirdPrep()) a.push(['Third prep day', 'So individual portions fit your fridge', ADD.third]);
+  return a;
+}
+function weeklyTotal() { return weekly() + addons().reduce(function (s, a) { return s + a[2]; }, 0); }
+
+function money(n) { return '$' + n.toLocaleString('en-US'); }
+function emailOk() { return /^[^\s@<>",;]+@[^\s@<>",;]+\.[a-z]{2,}$/i.test(state.email.trim()); }
+function phoneOk() { return state.phone.replace(/\D/g, '').length >= 10; }
+function contactOk() { return state.name.trim() !== '' && emailOk() && phoneOk(); }
+function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+function listJoin(a) { return a.length <= 1 ? (a[0] || '') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1]; }
+function ageWord(a) { return a === '0' ? 'under 1' : a; }
+function treatNote() {
+  var t = [];
+  if (state.diet.sugar) t.push('sugar-free');
+  if (state.diet.df) t.push('dairy-free');
+  return t.length ? ', made ' + t.join(' and ') : '';
+}
+var LEAF = '<svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16"><path d="M2 14 C6 10, 9 7, 14 2" stroke="var(--olive)" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M7 9 C5 7, 5 5, 6 4 C7.5 5, 8 7, 7 9 Z" fill="var(--olive)"/><path d="M10 6 C12 5.5, 13.5 6, 14 7 C12.5 8, 11 7.5, 10 6 Z" fill="var(--olive)"/></svg>';
+
+function progress() {
+  var all = steps(), q = all.length - 1, pct = Math.round(((state.i + 1) / q) * 100);
+  return '<div class="progress" aria-hidden="true"><span style="width: ' + pct + '%"></span></div><p class="eyebrow">' + SECTION[all[state.i]] + '</p>';
+}
+function nav(canNext, last) {
+  return '<div class="nav">' +
+    (state.i > 0 ? '<button class="btn ghost" id="back" type="button">Back</button>' : '<span></span>') +
+    '<button class="btn" id="next" type="button"' + (canNext ? '' : ' disabled') + '>' + (last ? 'See my plan' : 'Next') + '</button></div>';
+}
+function opt(key, val, title, sub) {
+  return '<button type="button" class="opt" data-key="' + key + '" data-val="' + val + '" aria-pressed="' + (state[key] === val) + '"><strong>' + esc(title) + '</strong>' + (sub ? '<small>' + esc(sub) + '</small>' : '') + '</button>';
+}
+function tog(key, title, sub) {
+  return '<button type="button" class="opt" data-toggle="' + key + '" aria-pressed="' + !!state[key] + '"><strong>' + esc(title) + '</strong><small>' + esc(sub) + '</small></button>';
+}
+function counter(key, title, sub, min) {
+  return '<div class="counter"><div class="who"><strong>' + title + '</strong><small>' + sub + '</small></div>' +
+    '<div class="stepper"><button type="button" data-step="' + key + '" data-d="-1" aria-label="Fewer ' + title.toLowerCase() + '"' + (state[key] <= min ? ' disabled' : '') + '>−</button>' +
+    '<output aria-live="polite">' + state[key] + '</output>' +
+    '<button type="button" data-step="' + key + '" data-d="1" aria-label="More ' + title.toLowerCase() + '"' + (state[key] >= 10 ? ' disabled' : '') + '>+</button></div></div>';
+}
+function ageSelect(c) {
+  var v = state.ages[c], h = '<label for="age-' + c + '">Child ' + (c + 1) + '’s age<select id="age-' + c + '" data-age="' + c + '"><option value=""' + (v === '' || v == null ? ' selected' : '') + '>Choose</option>';
+  h += '<option value="0"' + (v === '0' ? ' selected' : '') + '>Under 1</option>';
+  for (var a = 1; a <= 17; a++) h += '<option value="' + a + '"' + (v === String(a) ? ' selected' : '') + '>' + a + '</option>';
+  return h + '</select></label>';
+}
+
+function tableOk() {
+  var total = state.adults + state.children;
+  var countOk = state.people === 6 ? total >= 6 : total === state.people;
+  var agesOk = state.ages.length === state.children && state.ages.every(function (a) { return a !== '' && a != null; });
+  return state.adults >= 1 && countOk && agesOk;
+}
+function styleOk() { return !!state.style && (!(bigHarvest() && state.style === 'single') || !!state.fridge); }
+function dietOk() { return Object.keys(state.diet).some(function (k) { return state.diet[k]; }); }
+
+function render() {
+  var all = steps();
+  if (state.i > all.length - 1) state.i = all.length - 1;
+  var step = all[state.i], h = '';
+  if (step === 'name') {
+    h += progress() + '<h1>Let’s start with you.</h1>' +
+      '<p class="lede">A few gentle questions, and I’ll put together a plan made for your home.</p>' +
+      '<div class="field"><label for="firstName">Your first name</label><input id="firstName" type="text" autocomplete="given-name" value="' + esc(state.name) + '"></div>' +
+      '<div class="field"><label for="email">Your email</label><input id="email" type="email" autocomplete="email" inputmode="email" value="' + esc(state.email) + '"><small class="hint">I\u2019ll email your plan to you as soon as you finish.</small></div>' +
+      '<input type="text" id="hkWebsite" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" value="' + esc(state.hp) + '">' +
+      '<div class="field"><label for="phone">Your cell phone</label><input id="phone" type="tel" autocomplete="tel" inputmode="tel" value="' + esc(state.phone) + '"><small class="hint">So I can text you about your welcome call.</small></div>' +
+      '<div class="field"><label for="familyName">Your family name (optional)</label><input id="familyName" type="text" autocomplete="family-name" value="' + esc(state.family) + '"></div>' +
+      '<div class="field"><label for="birthday">Your birthday (optional)</label><input id="birthday" type="date" autocomplete="bday" value="' + esc(state.birthday) + '"><small class="hint">So I can celebrate you.</small></div>' +
+      nav(contactOk());
+  } else if (step === 'season') {
+    h += progress() + '<h1>For this season of your life, make Hearth your ritual.</h1>' +
+      '<p class="lede">Which feels most like where you are right now?</p><div class="options" role="group" aria-label="Your season">';
+    SEASONS.forEach(function (s) { h += opt('season', s[0], s[1], s[2]); });
+    h += '</div>' + nav(!!state.season);
+  } else if (step === 'meals') {
+    h += progress() + '<h1>How much would you love me to take off your plate?</h1>' +
+      '<p class="lede">Every meal is stacked in your fridge, ready to heat, and never tied to a certain day. Eat what you like, when you like.</p>' +
+      '<div class="options" role="group" aria-label="Meals">' +
+      opt('plan', 'taste', 'Help with dinners', 'Five dinners a week. A gentle first step.') +
+      opt('plan', 'gather', 'My weekdays, with nights out', 'Breakfast, lunch and dinner for five days. Weekends and dinners out are yours.') +
+      opt('plan', 'harvest', 'Every meal, every day of the week', 'Breakfast, lunch and dinner, seven days. Nothing left to think about.') +
+      '</div>' + nav(!!state.plan);
+  } else if (step === 'people') {
+    h += progress() + '<h1>How many people are you feeding?</h1><div class="options people" role="group" aria-label="People">';
+    for (var n = 1; n <= 6; n++) h += opt('people', n, String(n) + (n === 6 ? '+' : ''), n === 1 ? 'person' : 'people');
+    h += '</div>' + nav(!!state.people);
+  } else if (step === 'table') {
+    var total = state.adults + state.children;
+    h += progress() + '<h1>Who’s at your table?</h1>' +
+      '<p class="lede">Knowing the grown-ups and little ones helps me plan portions and flavors everyone will enjoy.</p>' +
+      '<div>' + counter('adults', 'Adults', 'Ages 18 and up', 1) + counter('children', 'Children', 'Under 18', 0) + '</div>';
+    if (state.children > 0) {
+      h += '<div class="ages">';
+      for (var c = 0; c < state.children; c++) h += ageSelect(c);
+      h += '</div>';
+    }
+    if (state.people === 6 ? total < 6 : total !== state.people) h += '<p class="warn">You told me ' + (state.people === 6 ? '6 or more' : state.people) + ' people. That adds up to ' + total + ' so far.</p>';
+    h += nav(tableOk());
+  } else if (step === 'style') {
+    h += progress() + '<h1>How would you like your meals?</h1>' +
+      '<p class="lede">This is for everyone at your table' + (state.children > 0 ? ', little ones included' : '') + '.</p>' +
+      '<div class="options" role="group" aria-label="Portion style">' +
+      opt('style', 'family', 'Family-style', 'Dishes made to share, so you can sit down and eat together') +
+      opt('style', 'single', 'Single servings', 'Individual portions, so everyone eats what they want, when they want') +
+      '</div>';
+    if (bigHarvest() && state.style === 'single') {
+      h += '<div class="aside"><p>For ' + headCount() + ' people on Full Harvest, single servings fill a lot of fridge space. Do you have a second refrigerator or a garage fridge?</p>' +
+        '<div class="chips" role="group" aria-label="Second refrigerator">' + opt('fridge', 'yes', 'Yes, we do', '') + opt('fridge', 'no', 'No', '') + '</div>' +
+        (state.fridge === 'no' ? '<p class="note">No problem. I’ll add a third prep day each week so everything fits, for ' + money(ADD.third) + ' a week. Or choose family-style, which needs far less room.</p>' : '') + '</div>';
+    }
+    h += nav(styleOk());
+  } else if (step === 'diet') {
+    h += progress() + '<h1>Any dietary needs or allergies?</h1>' +
+      '<p class="lede">Choose all that apply to anyone in your home. Next, you can tell me who each one is for and the exact ingredients to avoid.</p>' +
+      '<div class="chips" role="group" aria-label="Dietary needs">';
+    DIETS.forEach(function (d) { h += '<button type="button" class="opt" data-diet="' + d[0] + '" aria-pressed="' + !!state.diet[d[0]] + '"><strong>' + esc(d[1]) + '</strong></button>'; });
+    h += '</div>' + nav(dietOk());
+  } else if (step === 'dietDetail') {
+    var solo = headCount() === 1;
+    h += progress() + '<h1>Tell me a little more.</h1>' +
+      '<p class="lede">' + (solo ? 'Share the exact ingredients to avoid, and how serious each one is.' : 'For each one, tell me who it’s for and the exact ingredients to avoid.') + ' We’ll go over every allergy together on your welcome call.</p><div class="details">';
+    chosenDiets().forEach(function (d) {
+      var x = det(d[0]);
+      h += '<fieldset class="detail"><legend>' + esc(d[1]) + '</legend>' +
+        (solo ? '' : '<div class="field"><label for="who-' + d[0] + '">Who is this for?</label><input type="text" id="who-' + d[0] + '" data-who="' + d[0] + '" placeholder="For example: Emma and Dad" value="' + esc(x.who) + '"></div>') +
+        '<div class="field"><label for="what-' + d[0] + '">' + (d[0] === 'other' ? 'What should I know?' : 'Ingredients to avoid and any details') + '</label><textarea id="what-' + d[0] + '" data-what="' + d[0] + '" placeholder="' + esc(DETAIL_HINT[d[0]] || '') + '">' + esc(x.what) + '</textarea></div></fieldset>';
+    });
+    h += '</div>' + nav(true);
+  } else if (step === 'extras') {
+    h += progress() + '<h1>Would you like any homemade extras?</h1>' +
+      '<p class="lede">Every plan already includes a fresh wellness shot for each person, every morning. These are optional, and you can choose either or both.</p>' +
+      '<div class="options" role="group" aria-label="Homemade extras">' +
+      tog('bread', 'Fresh sourdough · ' + money(ADD.bread) + ' a week', 'One or two loaves a week from your family’s very own sourdough mother') +
+      tog('sweet', 'A little something sweet · ' + money(ADD.sweet) + ' a week', 'One homemade treat for your week' + treatNote()) +
+      tog('none', 'No thanks', 'Just the wellness shots for us') +
+      '</div>' + nav(state.bread || state.sweet || state.none);
+  } else if (step === 'little') {
+    h += progress() + '<h1>Would you like Little Plates for any of your children?</h1>' +
+      '<p class="lede">Little Plates are kid-friendly versions of your family’s meals, made for little ones who like things simple: milder seasoning, sauces on the side, foods kept separate on the plate, and smaller portions. Same wholesome ingredients, made the way they’ll actually eat them. Each child’s Little Plates come as their own single servings.</p>' +
+      '<div class="options" role="group" aria-label="Little Plates">';
+    for (var k = 0; k < state.children; k++) {
+      h += '<button type="button" class="opt" data-little="' + k + '" aria-pressed="' + !!state.little[k] + '"><strong>Child ' + (k + 1) + ' (age ' + esc(ageWord(state.ages[k])) + ')</strong><small>Little Plates · ' + money(ADD.little) + ' a week</small></button>';
+    }
+    h += '</div><p class="note">If your child happily eats what the grown-ups are having, they don’t need Little Plates. Their meals are already included in your plan.</p>' + nav(true);
+  } else if (step === 'earth') {
+    h += progress() + '<h1>Would you like to waste less, too?</h1>' +
+      '<p class="lede">Earth in Every Hearth is my zero-waste care: prep scraps become homemade stock, I make one use-it-up dish from what’s already in your kitchen, and I keep your pantry staples full in your own glass jars.</p>' +
+      '<div class="options" role="group" aria-label="Zero-waste care">' +
+      opt('earth', 'yes', 'Yes, add Earth in Every Hearth', money(ADD.earth) + ' a week for your whole home') +
+      opt('earth', 'no', 'Not right now', 'You can add it any time') +
+      '</div>' + nav(!!state.earth);
+  } else if (step === 'days') {
+    var p = TIERS[state.plan], preps = p.preps + (thirdPrep() ? 1 : 0);
+    h += progress() + '<h1>Which days work best for your prep ' + (preps > 1 ? 'days' : 'day') + '?</h1>' +
+      '<p class="lede">I prep Tuesday through Saturday. Tap the days in order, starting with the one that works best, and leave out any that don’t work. ' +
+      (preps === 1 ? 'Your Milkmaid visit for fresh wellness shots comes a few days after prep day.' : 'Your plan has ' + preps + ' prep days a week, spaced 3 to 4 days apart' + (preps > 2 ? ' where possible' : '') + ', so I’ll pair your favorite days.') + '</p>' +
+      '<div class="days" role="group" aria-label="Prep day preferences">';
+    WEEK.forEach(function (d) {
+      var r = state.days.indexOf(d);
+      h += '<button type="button" class="day" data-day="' + d + '" aria-pressed="' + (r >= 0) + '" aria-label="' + d + (r >= 0 ? ', choice ' + (r + 1) : ', not chosen') + '"><span class="rank">' + (r >= 0 ? r + 1 : '') + '</span><span>' + d + '</span></button>';
+    });
+    h += '</div>' + (state.days.length && state.days.length < preps ? '<p class="warn">Please choose at least ' + preps + ' days so I can space your prep days apart.</p>' : '') + (state.days.length ? '<p class="note">Your order: ' + esc(state.days.map(function (d, i) { return (i + 1) + '. ' + d; }).join('   ')) + '. Tap a day again to remove it.</p>' : '') + nav(state.days.length >= preps);
+  } else if (step === 'access') {
+    var taste = state.plan === 'taste';
+    h += progress() + '<h1>How will I get into your kitchen?</h1>' +
+      '<p class="lede">I’ll send you a two-hour arrival window before every visit. Please don’t share any codes here; we’ll set those up privately on our welcome call.</p>' +
+      '<div class="options" role="group" aria-label="Home access">' +
+      opt('access', 'home', 'Someone will be home to let me in', 'Within your two-hour arrival window') +
+      opt('access', 'code', 'A door or garage code', 'Shared privately on our call') +
+      opt('access', 'key', 'A key or lockbox', 'We’ll arrange it on our call') +
+      opt('access', 'later', 'I’m not sure yet', 'We’ll figure it out together') +
+      '</div>' +
+      (taste ? '<h2>Where should your Milkmaid delivery go?</h2><div class="options" role="group" aria-label="Milkmaid delivery">' +
+        opt('drop', 'fridge', 'Straight into my fridge', 'Fresh shots in, empty glass out') +
+        opt('drop', 'cooler', 'A cooler by the door', 'Leave the empties in the cooler for me') + '</div>' : '') +
+      '<h2>Any pets at home?</h2><div class="chips" role="group" aria-label="Pets">' + opt('pets', 'yes', 'Yes', '') + opt('pets', 'no', 'No', '') + '</div>' +
+      '<div class="field"><label for="accessNote">Anything else about getting in? Parking, gate, which door, pet names.</label><textarea id="accessNote" placeholder="For example: park in the driveway, use the side door, our dog Rosie is friendly">' + esc(state.accessNote) + '</textarea></div>' +
+      nav(!!state.access && (!taste || !!state.drop) && !!state.pets, true);
+  } else {
+    h += resultHTML();
+  }
+  card.innerHTML = h;
+  bind();
+}
+
+function displayName() { return state.name.trim(); }
+function familyLabel() {
+  var f = state.family.trim();
+  if (headCount() === 1) return 'Prepared for ' + displayName();
+  return 'Prepared for ' + (f ? 'the ' + f + ' family' : displayName() + '’s family');
+}
+function seasonLine(n) {
+  var s = state.season;
+  if (s === 'empty') return n === 1 ? 'This season is for you.' : n === 2 ? 'This season is for the two of you.' : 'This season is about the people around your table.';
+  if (s === 'full') return 'Your days are full, so let your kitchen be the easy part.';
+  if (s === 'solo') return 'Cooking for one deserves every bit as much care as cooking for a crowd.';
+  if (s === 'new') return 'New chapters ask a lot of us. Let your kitchen be one place you can rest.';
+  if (s === 'savor') return 'This is your season to slow down and savor.';
+  return '';
+}
+function letterHTML() {
+  var n = headCount(), paras = [], st = styleOf();
+  var kids = state.people > 1 && state.children > 0, ages = state.ages.map(ageWord);
+  paras.push(seasonLine(n) + ' Thank you for inviting me into your kitchen.');
+  var who;
+  if (n === 1) who = 'Each meal will be portioned just for you, stacked in your fridge and easy to warm on the busiest days.';
+  else if (kids) who = 'I’ll be cooking for all ' + n + ' of you, with grown-up flavors for the adults and plates your ' + (state.children === 1 ? 'little one, age ' + ages[0] + ',' : 'children, ages ' + listJoin(ages) + ',') + ' will look forward to.';
+  else who = 'I’ll be cooking for the ' + (n === 2 ? 'two' : n) + ' of you.';
+  if (n > 1) who += st === 'family' ? ' Your meals will be made family-style, ready for the oven, so you can all sit down together.' : ' Your meals will come in single servings, so everyone can eat what they want, when they want.';
+  paras.push(who);
+  var LBL = { gf: 'gluten-free', sodium: 'low sodium', sugar: 'no added sugar', df: 'dairy-free', veg: 'vegetarian', nut: 'no peanuts or tree nuts', fish: 'no fish or shellfish', egg: 'no eggs', soy: 'no soy' };
+  var fits = [], hasAllergy = false, byWho = {}, order = [];
+  chosenDiets().forEach(function (x) {
+    if (!LBL[x[0]]) return;
+    if (['nut', 'fish', 'egg', 'soy'].indexOf(x[0]) >= 0) hasAllergy = true;
+    var w = n > 1 ? det(x[0]).who.trim() : '', k = w.toLowerCase();
+    if (!byWho[k]) { byWho[k] = { w: w, l: [] }; order.push(k); }
+    byWho[k].l.push(LBL[x[0]]);
+  });
+  order.forEach(function (k) { var g = byWho[k]; fits.push(listJoin(g.l) + (g.w ? ' for ' + g.w : '')); });
+  var d = '';
+  if (fits.length) d += 'I’ll make sure every meal fits the way ' + (n === 1 ? 'you eat' : 'your family eats') + ': ' + listJoin(fits) + '. ';
+  if (hasAllergy) d += 'I take allergies very seriously, and I’ll take the greatest care in your kitchen. ';
+  if (chosenDiets().some(function (x) { var y = det(x[0]); return y.who.trim() || y.what.trim(); })) d += 'I’ve read every detail you shared, and we’ll go over them together on our welcome call so nothing is missed.';
+  if (d) paras.push(d.trim());
+  var extras = [];
+  if (state.bread) extras.push('fresh sourdough from your very own sourdough mother');
+  if (state.sweet) extras.push('a little something sweet to end your week');
+  var lc = littleCount();
+  if (lc) extras.push('Little Plates for your ' + (lc === 1 ? 'little one' : lc + ' little ones'));
+  paras.push('Each week we’ll plan your menu together, and every morning starts with a fresh wellness shot' + (n === 1 ? ' made for you.' : ' for everyone at your table.') + (extras.length ? ' And because you asked, there will be ' + listJoin(extras) + '.' : ''));
+  if (state.plan === 'harvest' || state.earth === 'yes') paras.push('We’ll waste less together, too. Your prep scraps become homemade stock, and your pantry stays full in your own glass jars.');
+  paras.push('I can’t wait to bring warmth back to your table.');
+  return '<div class="letter"><p class="dear">Dear ' + esc(displayName()) + ',</p>' + paras.map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('') + '<p class="sign">With love, Jordan</p></div>';
+}
+function rhythmHTML() {
+  var n = headCount(), p = TIERS[state.plan], d0 = state.days[0], d1 = state.days[1];
+  var stack = 'I shop, cook in your kitchen and stack your fridge with meals in glass, each labeled with what it is, the date and how to heat it.' + (state.bread ? ' Your sourdough comes out of the oven warm.' : '');
+  var items = [['Before your week', 'We talk through next week’s menu, built around ' + (n === 1 ? 'your favorites.' : 'your family’s favorites.')]];
+  if (p.preps === 1) {
+    items.push(['Prep day' + (d0 ? ', ideally ' + d0 : ''), stack]);
+    items.push(['Every morning', 'A fresh wellness shot ' + (n === 1 ? 'for you.' : 'for everyone.')]);
+    items.push(['Midweek', 'Your Milkmaid visit. Fresh-pressed shots are at their best for 3 to 4 days, so I bring a new batch and carry your empty glass home to wash and refill.' + (state.bread ? ' I’ll also feed your sourdough mother and set next week’s dough to rest.' : '')]);
+  } else {
+    items.push(['First prep day' + (d0 ? ', ideally ' + d0 : ''), stack]);
+    items.push(['Every morning', 'A fresh wellness shot ' + (n === 1 ? 'for you.' : 'for everyone.')]);
+    items.push(['Second prep day' + (d1 ? ', ideally ' + d1 : ', 3 to 4 days later'), 'Fresh meals for the rest of your week, plus your Milkmaid swap: a new batch of shots in, empty glass out.' + (state.bread ? ' I’ll also feed your sourdough mother.' : '')]);
+    if (thirdPrep()) items.push(['Third prep day', 'A smaller batch so everything fits comfortably in your fridge.']);
+  }
+  if (state.sweet) items.push(['End of the week', 'A little something sweet, homemade for you' + treatNote() + '.']);
+  return '<div class="rhythm">' + items.map(function (it) { return '<div class="beat"><span class="when">' + esc(it[0]) + '</span><span class="what">' + esc(it[1]) + '</span></div>'; }).join('') + '</div>';
+}
+function sharedHTML() {
+  var g1 = [], g2 = [];
+  var S = {}; SEASONS.forEach(function (s) { S[s[0]] = s[1]; });
+  if (state.season) g1.push(['Your season', S[state.season]]);
+  if (state.people > 1) {
+    var who = state.adults + (state.adults === 1 ? ' adult' : ' adults');
+    if (state.children > 0) who += ' and ' + state.children + (state.children === 1 ? ' child' : ' children') + ' (' + (state.children === 1 ? 'age ' : 'ages ') + listJoin(state.ages.map(ageWord)) + ')';
+    g1.push(['Your table', who]);
+    g1.push(['Your meals', styleOf() === 'family' ? 'Family-style' : 'Single servings']);
+  }
+  var cd = chosenDiets();
+  if (!cd.length) g1.push(['Dietary needs', 'None noted']);
+  cd.forEach(function (d) {
+    var x = det(d[0]), bits = [];
+    if (x.who.trim()) bits.push('For ' + x.who.trim());
+    if (x.what.trim()) bits.push(x.what.trim());
+    g1.push([d[1], bits.join(' · ') || 'Noted, and we’ll talk through it on our call']);
+  });
+  var AC = { home: 'Someone will be home', code: 'Door or garage code, shared on our call', key: 'Key or lockbox, arranged on our call', later: 'We’ll decide together on our call' };
+  if (state.days.length) g2.push(['Best prep days', state.days.map(function (d, i) { return (i + 1) + '. ' + d; }).join(', ')]);
+  if (state.access) g2.push(['Getting in', AC[state.access]]);
+  if (state.plan === 'taste' && state.drop) g2.push(['Milkmaid delivery', state.drop === 'cooler' ? 'Cooler by the door' : 'Straight into the fridge']);
+  if (state.pets) g2.push(['Pets', state.pets === 'yes' ? 'Yes' : 'No']);
+  if (state.accessNote.trim()) g2.push(['Notes', state.accessNote.trim()]);
+  return '<h2>What you shared with me</h2><div class="shared">' + [g1, g2].filter(function (g) { return g.length; }).map(function (g) {
+    return '<dl>' + g.map(function (r) { return '<div><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join('') + '</dl>';
+  }).join('') + '</div>';
+}
+function glassLine() {
+  var g = glassCounts(), bits = [];
+  if (g.dishes) bits.push(g.dishes + ' glass baking dishes with lids that go from oven to table');
+  if (g.singles) bits.push(g.singles + ' glass meal containers with lids' + (g.family ? ' for Little Plates' : ', one meal each, ready to reheat'));
+  bits.push(g.shots + ' glass wellness shot bottles');
+  return bits.length > 2 ? bits[0] + ', ' + bits[1] + ', plus ' + bits[2] : bits.join(', plus ');
+}
+function pantryLine() {
+  var t = 'About $110 of staples bought just for your kitchen: good oils and vinegars, salts and peppercorns, the spices your favorite dishes call for, baking basics, broth, Dijon, tamari and honey, in small glass jars where I can.';
+  var sw = [];
+  if (state.diet.gf) sw.push('gluten-free flour and tamari');
+  if (state.diet.sodium) sw.push('low-sodium broth and salt-free spice blends');
+  if (sw.length) t += ' For your home, that includes ' + sw.join(', plus ') + '.';
+  return t + ' Nothing bought in bulk or shared with another family; it’s all yours.';
+}
+function resetHTML() {
+  var items = [
+    ['Before I arrive', [
+      ['A welcome call', 'We talk through your family, your week and what you’re hoping for.'],
+      ['Your kitchen checklist', 'A quick list where you tick off what you already have, so I only bring what’s missing.']]],
+    ['The day of your reset, in your home', [
+      ['We sit down together', 'I learn each person’s favorites, dislikes, allergies and wellness goals, and write a family profile I cook from every week.'],
+      ['A fridge, freezer and pantry refresh', 'I clear out what’s expired, wipe down the shelves, group what’s left so it’s easy to find, and make a Hearth shelf for your meals.'],
+      ['A wellness shot tasting', 'You’ll try your first shot, and I’ll show you the bottle swap: full bottles in, empty ones back with me.'],
+      ['Your first menu', 'We plan your first week together and put your first prep day on the calendar.']]],
+    ['Yours to keep', [
+      ['Your own glassware', glassLine() + '. Sized to your plan and your table.'],
+      ['A starter pantry', pantryLine()]]]
+  ];
+  return '<div class="reset"><div class="reset-head"><h3>Your Kitchen Reset</h3><span class="reset-amt">' + money(resetFee()) + '<span>one time</span></span></div>' +
+    '<p class="reset-lede">Everything we do to get your kitchen ready, so your first week feels easy.</p>' +
+    items.map(function (g) { return '<h4>' + esc(g[0]) + '</h4><ul class="reset-list">' + g[1].map(function (i) { return '<li><strong>' + esc(i[0]) + '</strong><span>' + esc(i[1]) + '</span></li>'; }).join('') + '</ul>'; }).join('') +
+    '<p class="note">Paid before your first prep day and non-refundable, because the glassware and pantry are bought just for you. If your reset visit runs past five hours, extra time is $85 an hour, and I’ll always ask first.</p></div>';
+}
+function row(a, sub, amt, cls) { return '<div class="row' + (cls ? ' ' + cls : '') + '"><span>' + esc(a) + (sub ? '<span class="sub">' + esc(sub) + '</span>' : '') + '</span><span class="amt">' + amt + '</span></div>'; }
+function resultHTML() {
+  var p = TIERS[state.plan], n = headCount(), adds = addons();
+  var rows = row(p.name, p.meals + (n > 1 ? ', for ' + n : ', for you'), money(weekly()));
+  adds.forEach(function (a) { rows += row(a[0], a[1], a[2] ? money(a[2]) : 'Included'); });
+  var svc = weeklyTotal(), gw = groceriesWeekly();
+  return '<div class="result-head"><p class="eyebrow">' + esc(familyLabel()) + '</p>' +
+    '<div class="plan-name">Your ' + esc(p.name) + ' plan</div>' +
+    '<p class="serve">' + esc(p.meals) + (n > 1 ? ', for ' + n + ' at your table' : ', just for you') + '</p></div>' +
+    letterHTML() +
+    '<h2>Your week with Hearth</h2>' + rhythmHTML() +
+    sharedHTML() +
+    '<h2>Your plan</h2>' +
+    '<div class="allin"><span class="allin-num">About ' + money(svc + gw) + '</span><span class="allin-per">a week, all in</span>' +
+    '<p>That\u2019s ' + money(svc) + ' for my service, plus about ' + money(gw) + ' for your groceries at cost.</p></div>' +
+    '<h3 class="when-h">What you pay, and when</h3><ol class="paywhen">' +
+      '<li><span class="pw-when">Before we begin</span><span class="pw-what">Kitchen Reset, one time</span><span class="pw-amt">' + money(resetFee()) + '</span></li>' +
+      '<li><span class="pw-when">Ahead of time</span><span class="pw-what">Your grocery fund, paid weekly or monthly (' + money(groceries()) + ' a month)</span><span class="pw-amt">about ' + money(gw) + ' / week</span></li>' +
+      '<li><span class="pw-when">After each week</span><span class="pw-what">My service, billed once that week is done</span><span class="pw-amt">' + money(svc) + ' / week</span></li>' +
+    '</ol>' + resetHTML() +
+    '<details class="more"><summary>See what\u2019s in my service</summary><div class="rows">' + rows + '</div>' +
+    '<p class="note">I shop for your groceries at cost; every receipt is yours to see, and anything unused rolls forward.' + (state.people === 6 ? ' For larger families, I\u2019ll confirm your exact plan on our welcome call.' : '') + '</p></details>' +
+    (n > 1 ? '<div class="share"><h3>Talking it over at home?</h3><p>Here’s a simple summary to send to your husband or partner: what it costs, what it covers and how you’ll pay.</p>' +
+      '<div class="send"><button type="button" class="btn ghost" id="sharePlan">Share with someone at home</button></div>' +
+      '<div id="shareBox" hidden><p class="note">Ready to copy and send:</p><pre class="plantext" id="shareText"></pre></div></div>' : '') +
+    '<div class="contact"><p><strong>Let’s begin with a welcome call, ' + esc(displayName()) + '.</strong> I’ll reach out to find a time that suits you.</p>' +
+      '<p class="note" id="sendMsg" role="status"></p>' +
+      '<div class="send"><button type="button" class="btn" id="sendPlan" hidden>Try again</button><button type="button" class="copy" id="copyPlan">Copy my plan</button></div>' +
+      '<div id="planBox" hidden><p class="note">Your plan, ready to copy and email to jordansrowlan@gmail.com:</p><pre class="plantext" id="planText"></pre></div>' +
+      '<p class="note" id="sendHelp" hidden>You can also copy your plan and email it to me. You can also reach me at <span class="sel">918-968-5002</span> or <span class="sel">jordansrowlan@gmail.com</span>.</p></div>' +
+    '<div class="nav"><button class="btn ghost" id="restart" type="button">Start over</button><span></span></div>';
+}
+
+function summaryText() {
+  var now = new Date();
+  var p = TIERS[state.plan], n = headCount(), adds = addons();
+  var full = state.name.trim() + (state.family.trim() ? ' ' + state.family.trim() : '');
+  var L = [], sec = function (t) { L.push(''); L.push(t.toUpperCase()); };
+  var S = {}; SEASONS.forEach(function (s) { S[s[0]] = s[1]; });
+  L.push('New Hearth quiz from ' + full);
+  L.push('Taken ' + WEEKDAYS[now.getDay()] + ', ' + prettyDate(now.getFullYear(), now.getMonth() + 1, now.getDate()));
+  var bp = birthdayProfile(now);
+  sec('About ' + state.name.trim());
+  if (state.season) L.push('Season: ' + S[state.season]);
+  bp.forEach(function (x) { L.push(x); });
+  sec('Her plan');
+  L.push(p.name + ': ' + p.meals + ', for ' + n + (n === 1 ? ' person' : ' people') + (state.people === 6 ? ' (6 or more; confirm on the call)' : ''));
+  if (n > 1) L.push('Portions: ' + (styleOf() === 'family' ? 'family-style' : 'single servings') + (bigHarvest() && state.style === 'single' ? (state.fridge === 'yes' ? ' (has a second fridge)' : ' (no second fridge, so a third prep day)') : ''));
+  L.push('Service fee: ' + money(weekly()) + '/week');
+  adds.forEach(function (a) { L.push('+ ' + a[0] + ': ' + (a[2] ? money(a[2]) + '/week' : 'included') + (a[0] === 'Little Plates' ? ' (' + a[1] + ')' : '')); });
+  L.push('Weekly service total: ' + money(weeklyTotal()));
+  L.push('Grocery fund (paid ahead): ' + money(groceries()) + '/month or about ' + money(groceriesWeekly()) + '/week');
+  L.push('Kitchen Reset (paid ahead): ' + money(resetFee()));
+  var gc = glassCounts();
+  L.push('Glassware to bring: ' + [gc.dishes ? gc.dishes + ' family dishes' : '', gc.singles ? gc.singles + ' single containers' + (gc.family ? ' (Little Plates)' : '') : '', gc.shots + ' shot bottles'].filter(Boolean).join(', '));
+  L.push('Service fee billed weekly, after each week\u2019s service');
+  L.push('All in, each week (service + groceries): about ' + money(weeklyTotal() + groceriesWeekly()));
+  if (state.people > 1) {
+    sec('Her table');
+    L.push(state.adults + (state.adults === 1 ? ' adult' : ' adults') + (state.children ? ', ' + state.children + (state.children === 1 ? ' child' : ' children') + ' (' + (state.children === 1 ? 'age ' : 'ages ') + state.ages.map(ageWord).join(', ') + ')' : ''));
+    if (littleCount()) L.push('Little Plates for: ' + state.little.map(function (v, k) { return v ? 'child ' + (k + 1) + ' (age ' + ageWord(state.ages[k]) + ')' : null; }).filter(Boolean).join(', '));
+  }
+  sec('Dietary needs and allergies');
+  var cd = chosenDiets();
+  if (cd.length) cd.forEach(function (d) { var x = det(d[0]); L.push('• ' + d[1] + (x.who.trim() ? ', for ' + x.who.trim() : '') + (x.what.trim() ? ': ' + x.what.trim() : '')); });
+  else L.push('None noted');
+  sec('Schedule and access');
+  if (state.days.length) L.push('Best prep days, in order: ' + state.days.join(', '));
+  var AC = { home: 'Someone will be home', code: 'Door or garage code (get it on the call)', key: 'Key or lockbox (arrange on the call)', later: 'Not sure yet' };
+  if (state.access) L.push('Getting in: ' + AC[state.access]);
+  if (state.plan === 'taste' && state.drop) L.push('Milkmaid drop: ' + (state.drop === 'cooler' ? 'cooler by the door' : 'straight into the fridge'));
+  if (state.pets) L.push('Pets: ' + (state.pets === 'yes' ? 'yes' : 'no'));
+  if (state.accessNote.trim()) L.push('Notes: ' + state.accessNote.trim());
+  return L.join('\n');
+}
+function partnerText() {
+  var p = TIERS[state.plan], n = headCount(), svc = weeklyTotal(), gw = groceriesWeekly(), adds = addons(), g = glassCounts();
+  var L = [];
+  L.push('Here’s the Hearth plan I put together for ' + (n === 1 ? 'me' : 'us') + '.');
+  L.push('');
+  L.push('Chef Jordan Rowlan of Hearth Kitchen Co. would make ' + p.meals.charAt(0).toLowerCase() + p.meals.slice(1) + ', for ' + (n === 1 ? 'me' : 'all ' + n + ' of us') + ', cooked fresh in our own kitchen. Plan: ' + p.name + '.');
+  L.push('');
+  L.push('WHAT IT COSTS');
+  L.push('• About ' + money(svc + gw) + ' a week, all in: ' + money(svc) + ' for her service, plus about ' + money(gw) + ' for groceries.');
+  L.push('• Groceries are bought at cost, with no markup. We see every receipt, and anything unused rolls forward.');
+  L.push('• Her service is billed after each week is done, so we only pay for weeks already cooked.');
+  L.push('• One-time Kitchen Reset to get started: ' + money(resetFee()) + '.');
+  L.push('');
+  L.push('WHAT HER WEEKLY SERVICE COVERS');
+  L.push('• A menu planned with us each week, around our favorites' + (chosenDiets().length ? ' and our dietary needs' : ''));
+  L.push('• All the planning, shopping, cooking in our kitchen and cleanup');
+  L.push('• Meals stacked in glass in our fridge, labeled with what it is, the date and how to heat it');
+  L.push('• A fresh wellness shot for ' + (n === 1 ? 'me' : 'each of us') + ' every morning');
+  adds.forEach(function (a) { L.push('• ' + a[0] + (a[2] ? ' (' + money(a[2]) + ' a week)' : ' (included)') + ': ' + (a[1].charAt(0).toLowerCase() + a[1].slice(1)).replace(/\byour\b/g, 'our')); });
+  L.push('');
+  L.push('WHAT THE KITCHEN RESET COVERS');
+  L.push('• A welcome call, then an in-home visit to learn what each of us likes, dislikes and can’t eat');
+  L.push('• A refresh of our fridge, freezer and pantry, with a shelf set up for our meals');
+  L.push('• Ours to keep: ' + glassLine());
+  L.push('• Ours to keep: about $110 of pantry staples bought just for our kitchen');
+  L.push('• Our first menu, planned together, and our first prep day booked');
+  L.push('');
+  L.push('Chef Jordan · 918-968-5002 · jordansrowlan@gmail.com · hearthkitchencompany.com');
+  return L.join('\n');
+}
+function mailtoHref() { return 'mailto:jordansrowlan@gmail.com?subject=' + encodeURIComponent('My Hearth plan: ' + state.name.trim()) + '&body=' + encodeURIComponent(summaryText()); }
+
+function syncAges() {
+  while (state.ages.length < state.children) state.ages.push('');
+  state.ages.length = state.children;
+  state.little.length = state.children;
+}
+function bind() {
+  card.querySelectorAll('.opt[data-key]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var k = b.getAttribute('data-key'), v = b.getAttribute('data-val');
+      if (k === 'people') {
+        v = Number(v);
+        if (state.people !== v) { state.adults = state.season === 'full' ? Math.min(v, 2) : v; state.children = v - state.adults; syncAges(); state.fridge = null; }
+      }
+      if (k === 'season' && state.people == null) { if (v === 'solo') state.people = 1; if (v === 'empty') { state.people = 2; state.adults = 2; state.children = 0; } }
+      if (k === 'style' && v === 'family') state.fridge = null;
+      if (k === 'plan') state.fridge = null;
+      state[k] = v;
+      if ((k === 'people' || k === 'plan') && bigHarvest() && !state.style) state.style = 'family';
+      render();
+      var nx = document.getElementById('next'); if (nx && !nx.disabled) nx.focus();
+    });
+  });
+  card.querySelectorAll('.opt[data-toggle]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var k = b.getAttribute('data-toggle');
+      if (k === 'none') { state.none = !state.none; if (state.none) { state.bread = false; state.sweet = false; } }
+      else { state[k] = !state[k]; if (state[k]) state.none = false; }
+      render();
+    });
+  });
+  card.querySelectorAll('.opt[data-little]').forEach(function (b) {
+    b.addEventListener('click', function () { var k = Number(b.getAttribute('data-little')); state.little[k] = !state.little[k]; render(); });
+  });
+  card.querySelectorAll('.opt[data-diet]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var k = b.getAttribute('data-diet');
+      if (k === 'none') { var on = !state.diet.none; state.diet = {}; state.diet.none = on; }
+      else { state.diet[k] = !state.diet[k]; state.diet.none = false; }
+      if (state.diet.gf) { state.bread = false; state.sweet = false; state.none = false; }
+      render();
+    });
+  });
+  card.querySelectorAll('[data-step]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var k = b.getAttribute('data-step');
+      state[k] = Math.max(k === 'adults' ? 1 : 0, Math.min(10, state[k] + Number(b.getAttribute('data-d'))));
+      syncAges();
+      render();
+    });
+  });
+  card.querySelectorAll('select[data-age]').forEach(function (s) {
+    s.addEventListener('change', function () {
+      state.ages[Number(s.getAttribute('data-age'))] = s.value;
+      var nx = document.getElementById('next'); if (nx) nx.disabled = !tableOk();
+    });
+  });
+  card.querySelectorAll('.day[data-day]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var d = b.getAttribute('data-day'), r = state.days.indexOf(d);
+      if (r >= 0) state.days.splice(r, 1); else state.days.push(d);
+      render();
+      var again = card.querySelector('[data-day="' + d + '"]'); if (again) again.focus();
+    });
+  });
+  var fn = document.getElementById('firstName');
+  function recheck() { var nx = document.getElementById('next'); if (nx) nx.disabled = !contactOk(); }
+  if (fn) fn.addEventListener('input', function () { state.name = fn.value; recheck(); });
+  var em = document.getElementById('email'); if (em) em.addEventListener('input', function () { state.email = em.value; recheck(); });
+  var ph = document.getElementById('phone'); if (ph) ph.addEventListener('input', function () { state.phone = ph.value; recheck(); });
+  var fam = document.getElementById('familyName'); if (fam) fam.addEventListener('input', function () { state.family = fam.value; });
+  var bd = document.getElementById('birthday'); if (bd) bd.addEventListener('input', function () { state.birthday = bd.value; });
+  var an = document.getElementById('accessNote'); if (an) an.addEventListener('input', function () { state.accessNote = an.value; });
+  card.querySelectorAll('[data-who]').forEach(function (el) { el.addEventListener('input', function () { det(el.getAttribute('data-who')).who = el.value; }); });
+  card.querySelectorAll('[data-what]').forEach(function (el) { el.addEventListener('input', function () { det(el.getAttribute('data-what')).what = el.value; }); });
+  var hpEl = document.getElementById('hkWebsite'); if (hpEl) hpEl.addEventListener('input', function () { state.hp = hpEl.value; });
+  var sp = document.getElementById('sendPlan');
+  if (sp) sp.addEventListener('click', function () { state.sendStatus = ''; state.sentSummary = ''; autoSend(); });
+  paintSend();
+  autoSend();
+  var sh = document.getElementById('sharePlan');
+  if (sh) sh.addEventListener('click', function () {
+    var t = partnerText(), box = document.getElementById('shareBox'), st = document.getElementById('shareText');
+    if (box && st) { st.textContent = t; box.hidden = false; }
+    try { if (navigator.share) navigator.share({ title: 'Our Hearth plan', text: t }).catch(function () {}); } catch (e) {}
+  });
+  var cp = document.getElementById('copyPlan');
+  if (cp) cp.addEventListener('click', function () {
+    var lab = cp.textContent;
+    try { navigator.clipboard.writeText(summaryText()).then(function () { cp.textContent = 'Copied'; setTimeout(function () { cp.textContent = lab; }, 1600); }, function () { cp.textContent = 'Copy not available here'; }); } catch (e) { cp.textContent = 'Copy not available here'; }
+  });
+  var nx = document.getElementById('next'); if (nx) nx.addEventListener('click', function () { state.i++; render(); focusHead(); });
+  var bk = document.getElementById('back'); if (bk) bk.addEventListener('click', function () { state.i--; render(); focusHead(); });
+  var rs = document.getElementById('restart'); if (rs) rs.addEventListener('click', function () { state = fresh(); render(); focusHead(); });
+}
+// Sends the plan by itself when the results appear (and again only if the answers changed).
+function paintSend() {
+  var msg = document.getElementById('sendMsg'); if (!msg) return;
+  var sp = document.getElementById('sendPlan'), help = document.getElementById('sendHelp');
+  var box = document.getElementById('planBox'), pt = document.getElementById('planText');
+  var st = state.sendStatus;
+  msg.className = st === 'failed' ? 'warn' : 'note';
+  msg.textContent = st === 'sent' ? 'Your plan is on its way to your inbox, and I have a copy too. I\u2019ll be in touch soon. With love, Jordan.'
+    : st === 'failed' ? 'I\u2019m so sorry, your plan didn\u2019t send. Your plan is below: copy it and email it to me, or text me at 918-968-5002 and I\u2019ll take it from there.'
+    : 'Sending your plan to your inbox\u2026';
+  if (sp) sp.hidden = st !== 'failed';
+  if (help) help.hidden = st !== 'failed';
+  if (st === 'failed' && box && pt) { pt.textContent = summaryText(); box.hidden = false; }
+}
+function autoSend() {
+  if (!document.getElementById('sendMsg') || state.sendStatus === 'sending') return;
+  var summary = summaryText();
+  if ((state.sendStatus === 'sent' || state.sendStatus === 'failed') && state.sentSummary === summary) return;
+  state.sendStatus = 'sending'; state.sentSummary = summary; paintSend();
+  var full = state.name.trim() + (state.family.trim() ? ' ' + state.family.trim() : '');
+  fetch('https://hearth-checkout.jordansrowlan.workers.dev/send-plan', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: full, email: state.email.trim(), phone: state.phone.trim(), summary: summary, website: state.hp }) })
+    .then(function (r) { return r.json().then(function (d) { if (!r.ok || !d.ok) throw new Error(d.error || 'failed'); }); })
+    .then(function () { state.sendStatus = 'sent'; paintSend(); })
+    .catch(function () { state.sendStatus = 'failed'; paintSend(); });
+}
+function focusHead() { var h = card.querySelector('h1, .plan-name'); if (h) { h.setAttribute('tabindex', '-1'); h.focus({ preventScroll: false }); } }
+
+// [name, endMonth, endDay, element, modality, ruler, personality, in the kitchen]
+var SIGNS = [
+  ['Capricorn', 1, 19, 'Earth', 'Cardinal', 'Saturn', 'grounded, hardworking and quietly devoted to the people she loves', 'Loves classic, reliable dishes made with quality ingredients. Traditional recipes done beautifully will win her over.'],
+  ['Aquarius', 2, 18, 'Air', 'Fixed', 'Uranus and Saturn', 'independent, original and always looking for a better way', 'Open to the unexpected: plant-forward ideas, creative twists and new ingredients.'],
+  ['Pisces', 3, 20, 'Water', 'Mutable', 'Neptune and Jupiter', 'gentle, intuitive and deeply caring', 'Drawn to soulful, comforting food: soups, gentle flavors and meals that feel like a hug.'],
+  ['Aries', 4, 19, 'Fire', 'Cardinal', 'Mars', 'energetic, bold and always on the go', 'Likes bold, bright flavors and a little heat, and food that’s ready the moment she is.'],
+  ['Taurus', 5, 20, 'Earth', 'Fixed', 'Venus', 'steady, loyal and devoted to comfort and a cozy home', 'A true food lover. Rich comfort dishes, quality ingredients and beautiful presentation matter to her.'],
+  ['Gemini', 6, 20, 'Air', 'Mutable', 'Mercury', 'curious, social and happiest with variety', 'Gets bored easily. Rotate cuisines often and offer small plates and new flavors.'],
+  ['Cancer', 7, 22, 'Water', 'Cardinal', 'the Moon', 'nurturing, home-centered and protective of family', 'Food is memory for her. Family recipes, soups and home-style comfort will mean the most.'],
+  ['Leo', 8, 22, 'Fire', 'Fixed', 'the Sun', 'warm, generous and loves to gather people', 'Loves a little show: vibrant dishes, beautiful plating and meals worth celebrating.'],
+  ['Virgo', 9, 22, 'Earth', 'Mutable', 'Mercury', 'thoughtful, detail-minded and health-conscious', 'Values clean, wholesome food and clear labels. She’ll notice and appreciate the details.'],
+  ['Libra', 10, 22, 'Air', 'Cardinal', 'Venus', 'gracious, harmony-seeking and drawn to beauty', 'Loves balance and elegance: harmonious flavors and a lovely table.'],
+  ['Scorpio', 11, 21, 'Water', 'Fixed', 'Pluto and Mars', 'deep, loyal and private', 'Drawn to deep, rich flavors: slow braises, bold spices and a little mystery.'],
+  ['Sagittarius', 12, 21, 'Fire', 'Mutable', 'Jupiter', 'adventurous, optimistic and curious about the world', 'An adventurous eater. Global cuisines and new spices will light her up.'],
+  ['Capricorn', 12, 31, 'Earth', 'Cardinal', 'Saturn', 'grounded, hardworking and quietly devoted to the people she loves', 'Loves classic, reliable dishes made with quality ingredients. Traditional recipes done beautifully will win her over.']
+];
+var LIFE = {
+  1: 'a natural leader, independent and driven', 2: 'a peacemaker, sensitive and partnership-minded',
+  3: 'creative, expressive and joyful', 4: 'a builder who values stability and routine',
+  5: 'freedom-loving and drawn to change and adventure', 6: 'a nurturer devoted to home and family',
+  7: 'reflective, spiritual and a seeker of truth', 8: 'ambitious, capable and focused on abundance',
+  9: 'compassionate and generous, a giver to others',
+  11: 'a master number: intuitive, inspiring and spiritually attuned',
+  22: 'a master number: a visionary builder of lasting things',
+  33: 'a master number: a nurturing teacher who leads with love'
+};
+var CYCLE = {
+  1: 'new beginnings and fresh starts', 2: 'patience, partnership and connection', 3: 'joy, creativity and expression',
+  4: 'structure, routine and steady work', 5: 'change, freedom and something new', 6: 'home, family and care',
+  7: 'rest, reflection and inner work', 8: 'abundance, focus and achievement', 9: 'completion, release and letting go'
+};
+var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+var WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+function zodiacMD(m, d) {
+  for (var k = 0; k < SIGNS.length; k++) { var s = SIGNS[k]; if (m < s[1] || (m === s[1] && d <= s[2])) return s; }
+  return SIGNS[0];
+}
+function zodiac(iso) { var p = iso.split('-'); return zodiacMD(Number(p[1]), Number(p[2])); }
+function digitSum(n) { return String(n).split('').reduce(function (a, c) { return a + Number(c); }, 0); }
+function reduce9(n) { while (n > 9) n = digitSum(n); return n; }
+function lifePath(iso) {
+  var n = digitSum(iso.replace(/\D/g, ''));
+  while (n > 9 && n !== 11 && n !== 22 && n !== 33) n = digitSum(n);
+  return n;
+}
+function moonPhase(date) {
+  var days = (date.getTime() - Date.UTC(2000, 0, 6, 18, 14)) / 86400000;
+  var age = ((days % 29.530588853) + 29.530588853) % 29.530588853;
+  var names = ['New moon', 'Waxing crescent moon', 'First quarter moon', 'Waxing gibbous moon', 'Full moon', 'Waning gibbous moon', 'Last quarter moon', 'Waning crescent moon'];
+  return names[Math.floor(((age / 29.530588853) * 8) + 0.5) % 8];
+}
+function prettyDate(y, m, d) { return MONTHS[m - 1] + ' ' + d + ', ' + y; }
+function validBirthday() {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(state.birthday)) return false;
+  var p = state.birthday.split('-').map(Number);
+  return p[0] > 1900 && p[1] >= 1 && p[1] <= 12 && p[2] >= 1 && p[2] <= 31;
+}
+function birthdayProfile(now) {
+  if (!validBirthday()) return [];
+  var p = state.birthday.split('-').map(Number), by = p[0], bm = p[1], bd = p[2];
+  var z = zodiac(state.birthday), lp = lifePath(state.birthday);
+  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var next = new Date(now.getFullYear(), bm - 1, bd);
+  if (next < today) next = new Date(now.getFullYear() + 1, bm - 1, bd);
+  var daysTo = Math.round((next - today) / 86400000), turning = next.getFullYear() - by;
+  var py = reduce9(bm + bd + digitSum(now.getFullYear()));
+  var pm = reduce9(py + now.getMonth() + 1);
+  var pd = reduce9(pm + now.getDate());
+  var season = zodiacMD(now.getMonth() + 1, now.getDate())[0];
+  var L = [];
+  L.push('Birthday: ' + prettyDate(by, bm, bd) + (daysTo === 0 ? ' — it’s her birthday today!' : ' — turns ' + turning + ' in ' + daysTo + (daysTo === 1 ? ' day' : ' days') + (daysTo <= 30 ? ' (coming up soon!)' : '')));
+  L.push('Sun sign: ' + z[0] + ' · ' + z[3] + ' sign · ' + z[4] + ' · ruled by ' + z[5]);
+  L.push('Who she is: ' + z[6].charAt(0).toUpperCase() + z[6].slice(1) + '.');
+  L.push('In the kitchen: ' + z[7]);
+  L.push('Life path ' + lp + ': ' + LIFE[lp].charAt(0).toUpperCase() + LIFE[lp].slice(1) + '.');
+  L.push('Her year: Personal year ' + py + ', a year of ' + CYCLE[py] + '.');
+  L.push('This month: Personal month ' + pm + ', a time for ' + CYCLE[pm] + '.');
+  L.push('The day she took the quiz: Personal day ' + pd + ', a day for ' + CYCLE[pd] + '.');
+  L.push('The sky that day: ' + season + ' season, ' + moonPhase(now).toLowerCase() + '.');
+  return L;
+}
+
+render();
+</script>
+</body>
+</html>
