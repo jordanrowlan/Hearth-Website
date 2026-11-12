@@ -638,15 +638,16 @@ function resultHTML() {
     '</ol>' + resetHTML() +
     '<details class="more"><summary>See what\u2019s in my service</summary><div class="rows">' + rows + '</div>' +
     '<p class="note">I shop for your groceries at cost; every receipt is yours to see, and anything unused rolls forward.' + (state.people === 6 ? ' For larger families, I\u2019ll confirm your exact plan on our welcome call.' : '') + '</p></details>' +
-    (n > 1 ? '<div class="share"><h3>Talking it over at home?</h3><p>Here’s a simple summary to send to your husband or partner: what it costs, what it covers and how you’ll pay.</p>' +
-      '<div class="send"><button type="button" class="btn ghost" id="sharePlan">Share with someone at home</button></div>' +
-      '<div id="shareBox" hidden><p class="note">Ready to copy and send:</p><pre class="plantext" id="shareText"></pre></div></div>' : '') +
-    '<div class="contact"><p><strong>Let’s begin with a welcome call, ' + esc(displayName()) + '.</strong> I’ll reach out to find a time that suits you.</p>' +
-      '<p class="note" id="sendMsg" role="status"></p>' +
+    '<div class="contact"><p><strong>Let’s begin with a welcome call, ' + esc(displayName()) + '.</strong></p>' +
+      '<p id="sendMsg" role="status"></p>' +
       '<div id="nextStep" class="send" hidden><a class="btn" href="checklist.html">Next: your Kitchen Reset checklist</a></div>' +
-      '<div class="send"><button type="button" class="btn" id="sendPlan" hidden>Try again</button><button type="button" class="copy" id="copyPlan">Copy my plan</button></div>' +
-      '<div id="planBox" hidden><p class="note">Your plan, ready to copy and email to jordansrowlan@gmail.com:</p><pre class="plantext" id="planText"></pre></div>' +
-      '<p class="note" id="sendHelp" hidden>You can also copy your plan and email it to me. You can also reach me at <span class="sel">918-968-5002</span> or <span class="sel">jordansrowlan@gmail.com</span>.</p></div>' +
+      '<div id="sendFail" class="send" hidden><button type="button" class="btn" id="sendPlan">Try again</button><button type="button" class="copy" id="copyPlan">Copy my plan</button></div>' +
+      '<div id="planBox" hidden><pre class="plantext" id="planText"></pre></div>' +
+      '<p class="note" id="sendHelp" hidden>Or reach me at <span class="sel">918-968-5002</span> or <span class="sel">jordansrowlan@gmail.com</span>.</p></div>' +
+    (n > 1 ? '<div class="share"><h3>Talking it over at home?</h3><p>Send a short summary to your husband or partner: what it costs, what it covers and how you’ll pay.</p>' +
+      '<div class="send"><button type="button" class="btn ghost" id="sharePlan">Share with someone at home</button></div>' +
+      '<p class="note" id="shareMsg" role="status" hidden></p></div>' : '') +
+
     '<div class="nav"><button class="btn ghost" id="restart" type="button">Start over</button><span></span></div>';
 }
 
@@ -809,9 +810,12 @@ function bind() {
   autoSend();
   var sh = document.getElementById('sharePlan');
   if (sh) sh.addEventListener('click', function () {
-    var t = partnerText(), box = document.getElementById('shareBox'), st = document.getElementById('shareText');
-    if (box && st) { st.textContent = t; box.hidden = false; }
-    try { if (navigator.share) navigator.share({ title: 'Our Hearth plan', text: t }).catch(function () {}); } catch (e) {}
+    var t = partnerText(), m = document.getElementById('shareMsg');
+    function copied(ok) { if (m) { m.hidden = false; m.textContent = ok ? 'Summary copied. Paste it into a text or email.' : 'Sharing isn\u2019t available on this device.'; } }
+    try {
+      if (navigator.share) { navigator.share({ title: 'Our Hearth plan', text: t }).catch(function () {}); return; }
+      navigator.clipboard.writeText(t).then(function () { copied(true); }, function () { copied(false); });
+    } catch (e) { copied(false); }
   });
   var cp = document.getElementById('copyPlan');
   if (cp) cp.addEventListener('click', function () {
@@ -828,11 +832,11 @@ function paintSend() {
   var sp = document.getElementById('sendPlan'), help = document.getElementById('sendHelp');
   var box = document.getElementById('planBox'), pt = document.getElementById('planText');
   var st = state.sendStatus;
-  msg.className = st === 'failed' ? 'warn' : 'note';
-  msg.textContent = st === 'sent' ? 'Your plan is on its way to your inbox, and I have a copy too. I\u2019ll be in touch soon. With love, Jordan.'
+  msg.className = st === 'failed' ? 'warn' : '';
+  msg.textContent = st === 'sent' ? 'Your plan is on its way to your inbox, and I have a copy too. I\u2019ll reach out soon to find a time for your call. With love, Jordan.'
     : st === 'failed' ? 'I\u2019m so sorry, your plan didn\u2019t send. Your plan is below: copy it and email it to me, or text me at 918-968-5002 and I\u2019ll take it from there.'
     : 'Sending your plan to your inbox\u2026';
-  if (sp) sp.hidden = st !== 'failed';
+  var fail = document.getElementById('sendFail'); if (fail) fail.hidden = st !== 'failed';
   var nx = document.getElementById('nextStep'); if (nx) nx.hidden = st !== 'sent';
   if (st === 'sent') { try { sessionStorage.setItem('hearthClient', JSON.stringify({ name: state.name.trim() + (state.family.trim() ? ' ' + state.family.trim() : ''), email: state.email.trim() })); } catch (e) {} }
   if (help) help.hidden = st !== 'failed';
