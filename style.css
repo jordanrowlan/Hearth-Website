@@ -149,8 +149,9 @@ textarea{min-height:110px;resize:vertical}
 @media (max-width:560px){
   .site-head{padding:12px 0;gap:8px}
   .brand svg{width:92px}
-  .site-nav ul{gap:6px 13px;flex-wrap:nowrap}
-  .site-nav a{font-size:.84rem;white-space:nowrap}
+  .site-nav ul{gap:6px 11px;flex-wrap:nowrap}
+  .site-nav a{font-size:.8rem;white-space:nowrap}
+  .site-nav li:has(a[href="pay.html"]){display:none}
   .hero{padding-block:8px 40px;gap:20px}
   .hero .portrait{max-width:250px;margin-inline:auto}
   .hero .portrait img{border-radius:140px 140px 16px 16px}

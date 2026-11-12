@@ -14,7 +14,7 @@ SPRIG = ('<svg class="sprig" viewBox="0 0 200 40" aria-hidden="true" fill="none"
          '<path d="M110 20c-4-11 5-15 12-12-3 8-7 11-12 12z"/><path d="M140 20c7-8 16-6 19 0-8 3-14 3-19 0z"/><path d="M68 21c-5 9-12 10-17 5 6-4 11-5 17-5z"/>'
          '<path d="M126 21c4 9 12 11 17 6-6-4-11-6-17-6z"/><circle cx="170" cy="19" r="3"/><circle cx="30" cy="22" r="2.5"/></svg>')
 
-NAV = [("index.html", "Home"), ("story.html", "My Story"), ("thanksgiving.html", "Thanksgiving"), ("contact.html", "Contact"), ("pay.html", "Pay Invoice")]
+NAV = [("index.html", "Home"), ("story.html", "My Story"), ("quiz.html", "Find Your Plan"), ("thanksgiving.html", "Thanksgiving"), ("contact.html", "Contact"), ("pay.html", "Pay Invoice")]
 FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
          '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Figtree:wght@400;500;600&family=Pinyon+Script&display=swap">')
 LD = ('<script type="application/ld+json">{"@context":"https://schema.org","@type":"FoodEstablishment","name":"Hearth Kitchen Co.",'
@@ -105,9 +105,13 @@ home = f'''
     <h2 id="help">Let me bring the warmth back to your kitchen.</h2>
   </div>
   <div class="offer">
-    <article class="card stack"><h3>Weekly meal prep</h3><p>Dinner's done, waiting in your fridge, labeled and ready. Add fresh wellness shots to start each morning bright.</p><p><a href="contact.html">Ask about it</a></p></article>
-    <article class="card stack"><h3>Kitchen Reset</h3><p>A fresh start for your pantry and fridge, with glass containers to keep.</p><p><a href="contact.html">Ask about it</a></p></article>
+    <article class="card stack"><h3>Weekly meal prep</h3><p>Meals made in your kitchen, waiting in your fridge, labeled and ready, with a fresh wellness shot to start each morning bright.</p><p><a href="quiz.html">Find your Hearth plan</a></p></article>
+    <article class="card stack"><h3>Kitchen Reset</h3><p>Where every Hearth home begins: a fresh start for your pantry and fridge, with glass containers to keep.</p><p><a href="quiz.html">Find your Hearth plan</a></p></article>
     <article class="card stack"><h3>Dinners and gatherings</h3><p>Menus from around the world, built around your celebration.</p><p><a href="contact.html">Ask about it</a></p></article>
+  </div>
+  <div class="stack" style="text-align:center;justify-items:center;margin-top:28px">
+    <p>A few gentle questions, and I'll put together a plan made for your home.</p>
+    <p><a class="btn" href="quiz.html">Find your Hearth plan</a></p>
   </div>
 </section>
 

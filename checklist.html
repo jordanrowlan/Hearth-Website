@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Kitchen Reset Checklist | Hearth Kitchen Co.</title>
+<meta name="description" content="A short checklist for Hearth clients before their Kitchen Reset visit.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#914117">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=Poppins:wght@300;400;500&display=swap">
+<style>
+/* Layout: one centered recipe-card column; one question at a time, then a result card */
+:root {
+  --bg: #F7F1E7;
+  --card: #FFFDF9;
+  --fg: #2E2B28;
+  --muted: #5E5850;
+  --line: #E3D6C2;
+  --terra: #914117;
+  --terra-soft: #F3E3D6;
+  --olive: #4E5D33;
+  --gold: #B8924A;
+  --on-terra: #FFFFFF;
+  --paper: #FBF5EA;
+  --display: 'Lora', Georgia, 'Times New Roman', serif;
+  --body: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1E1D19; --card: #2A2823; --fg: #F2EBDF; --muted: #C2B8A8; --line: #45403A;
+    --terra: #E08A5C; --terra-soft: #3D2A20; --olive: #A9B98A; --gold: #D2B06E; --on-terra: #1E1D19; --paper: #24221D;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1E1D19; --card: #2A2823; --fg: #F2EBDF; --muted: #C2B8A8; --line: #45403A;
+  --terra: #E08A5C; --terra-soft: #3D2A20; --olive: #A9B98A; --gold: #D2B06E; --on-terra: #1E1D19; --paper: #24221D;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 56px;
+}
+.wrap { max-width: 580px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+.brand { display: flex; align-items: baseline; gap: 10px; }
+.brand .name { font-family: var(--display); font-size: 30px; color: var(--terra); line-height: 1; }
+.brand .co { font-size: 10px; letter-spacing: 3px; color: var(--olive); }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 28px clamp(20px, 5vw, 36px); display: flex; flex-direction: column; gap: 20px; }
+.progress { height: 4px; border-radius: 2px; background: var(--line); overflow: hidden; }
+.progress span { display: block; height: 100%; background: var(--gold); border-radius: 2px; transition: width .3s ease; }
+@media (prefers-reduced-motion: reduce) { .progress span { transition: none; } }
+.eyebrow { font-size: 11px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--olive); margin: 0; }
+h1, h2 { font-family: var(--display); font-weight: 500; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(26px, 6vw, 34px); line-height: 1.15; }
+h2 { font-size: 22px; line-height: 1.25; }
+.lede { margin: 0; color: var(--muted); }
+.options { display: flex; flex-direction: column; gap: 10px; }
+.opt {
+  font: inherit; color: inherit; text-align: left; cursor: pointer;
+  background: transparent; border: 1px solid var(--line); border-radius: 10px;
+  padding: 14px 16px; display: flex; flex-direction: column; gap: 2px; min-height: 44px;
+  transition: border-color .15s, background .15s;
+}
+.opt:hover { border-color: var(--terra); }
+.opt[aria-pressed="true"] { border-color: var(--terra); background: var(--terra-soft); }
+.opt strong { font-weight: 500; }
+.opt small { color: var(--muted); font-size: 13px; }
+.people { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.people .opt { align-items: center; text-align: center; padding: 14px 8px; }
+.people .opt strong { font-family: var(--display); font-size: 22px; font-weight: 500; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips .opt { flex-direction: row; align-items: center; padding: 10px 14px; border-radius: 999px; }
+.counter { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.counter:first-child { border-top: 1px solid var(--line); }
+.counter .who strong { display: block; font-weight: 500; }
+.counter .who small { color: var(--muted); font-size: 13px; }
+.stepper { display: flex; align-items: center; gap: 12px; }
+.stepper button { font: inherit; font-size: 20px; line-height: 1; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--terra); background: transparent; color: var(--terra); cursor: pointer; }
+.stepper button:disabled { opacity: .35; cursor: not-allowed; }
+.stepper output { font-family: var(--display); font-size: 24px; min-width: 24px; text-align: center; font-variant-numeric: tabular-nums; }
+.ages { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+.ages label, .field label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); }
+select, textarea, input[type="text"] { font: inherit; color: var(--fg); background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; min-height: 44px; width: 100%; }
+textarea { min-height: 84px; resize: vertical; }
+select:focus-visible, textarea:focus-visible, input[type="text"]:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.warn { margin: 0; font-size: 13px; color: var(--terra); }
+.nav { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.btn {
+  font: inherit; font-weight: 500; cursor: pointer; border-radius: 999px; min-height: 44px;
+  padding: 10px 22px; border: 1px solid var(--terra); background: var(--terra); color: var(--on-terra);
+}
+.btn.ghost { background: transparent; color: var(--terra); }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.result-head { display: flex; flex-direction: column; gap: 6px; }
+.plan-name { font-family: var(--display); font-size: clamp(34px, 8vw, 44px); color: var(--terra); line-height: 1.05; }
+.serve { margin: 4px 0 0; font-family: var(--display); font-style: italic; font-size: 16px; color: var(--olive); }
+.shared { display: grid; gap: 14px; }
+.shared dl { margin: 0; border-left: 2px solid var(--gold); padding-left: 14px; display: grid; gap: 8px; font-size: 14px; }
+.shared dl div { display: grid; grid-template-columns: 132px minmax(0, 1fr); gap: 10px; }
+.shared dt { color: var(--muted); }
+.shared dd { margin: 0; overflow-wrap: anywhere; }
+@media (max-width: 460px) { .shared dl div { grid-template-columns: minmax(0, 1fr); gap: 0; } }
+.table-sum { display: grid; gap: 4px; font-size: 14px; border-left: 2px solid var(--gold); padding-left: 14px; }
+.table-sum p { margin: 0; }
+.table-sum .k { color: var(--muted); }
+.rows { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+.row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.row span:first-child { min-width: 0; }
+.row .amt { font-family: var(--display); font-size: 20px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.row .sub { display: block; font-size: 12.5px; color: var(--muted); }
+.note { margin: 0; font-size: 13px; color: var(--muted); }
+.includes { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; font-size: 14px; }
+.includes li { display: flex; gap: 10px; align-items: flex-start; }
+.includes svg { flex: none; margin-top: 4px; }
+.contact { background: var(--terra-soft); border-radius: 10px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+.contact p { margin: 0; }
+.contact-line { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.contact-line span { user-select: all; font-weight: 500; overflow-wrap: anywhere; min-width: 0; }
+.copy { font: inherit; font-size: 13px; cursor: pointer; background: transparent; color: var(--terra); border: 1px solid var(--terra); border-radius: 999px; padding: 6px 14px; min-height: 36px; }
+.letter { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 22px clamp(18px, 4vw, 28px); display: flex; flex-direction: column; gap: 12px; font-family: var(--display); font-size: 16.5px; line-height: 1.65; }
+.letter p { margin: 0; }
+.letter .dear { font-style: italic; font-size: 18px; color: var(--terra); }
+.letter .sign { font-style: italic; font-size: 18px; color: var(--terra); text-align: right; }
+.rhythm { display: flex; flex-direction: column; }
+.beat { display: grid; grid-template-columns: 128px minmax(0, 1fr); gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.beat:first-child { border-top: 1px solid var(--line); }
+.beat .when { font-size: 11px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--olive); padding-top: 2px; }
+@media (max-width: 460px) { .beat { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
+.details { display: flex; flex-direction: column; gap: 14px; }
+.detail { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px 16px; margin: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.detail legend { padding: 0 6px; font-family: var(--display); font-size: 17px; color: var(--terra); }
+.days { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
+.day { font: inherit; color: inherit; cursor: pointer; background: transparent; border: 1px solid var(--line); border-radius: 10px; min-height: 48px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; text-align: left; }
+.day:hover { border-color: var(--terra); }
+.day[aria-pressed="true"] { border-color: var(--terra); background: var(--terra-soft); }
+.day .rank { flex: none; width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font-family: var(--display); font-size: 15px; color: var(--terra); }
+.day[aria-pressed="true"] .rank { background: var(--terra); border-color: var(--terra); color: var(--on-terra); }
+.hint { color: var(--muted); font-size: 12.5px; }
+input[type="date"] { font: inherit; color: var(--fg); background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; min-height: 44px; width: 100%; }
+.send { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.sel { user-select: all; color: var(--fg); font-weight: 500; overflow-wrap: anywhere; }
+.send .btn { text-decoration: none; display: inline-flex; align-items: center; }
+.group { display: flex; flex-direction: column; gap: 10px; }
+.group h2 { font-size: 20px; }
+.checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+.check { display: flex; gap: 10px; align-items: center; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; min-height: 44px; cursor: pointer; font-size: 14px; }
+.check input { width: 20px; height: 20px; accent-color: var(--terra); flex: none; margin: 0; }
+.check:has(input:checked) { border-color: var(--terra); background: var(--terra-soft); }
+.count { font-size: 13px; color: var(--muted); margin: 0; }
+input[type="text"], textarea { font: inherit; color: var(--fg); background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; min-height: 44px; width: 100%; }
+textarea { min-height: 84px; resize: vertical; }
+.yn { display: flex; flex-wrap: wrap; gap: 8px; }
+.yn label { display: inline-flex; gap: 8px; align-items: center; border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; min-height: 40px; cursor: pointer; font-size: 14px; }
+.yn label:has(input:checked) { border-color: var(--terra); background: var(--terra-soft); }
+.yn input { accent-color: var(--terra); margin: 0; }
+.q { display: flex; flex-direction: column; gap: 8px; }
+.q p { margin: 0; font-size: 14px; }
+.plantext { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 13px/1.5 var(--body); background: var(--card); color: var(--fg); border: 1px solid var(--line); border-radius: 8px; padding: 12px; max-height: 320px; overflow: auto; user-select: all; }
+.foot { text-align: center; font-family: var(--display); font-style: italic; color: var(--terra); margin: 0; }
+@media (prefers-reduced-motion: reduce) { .opt { transition: none; } }
+.brand { text-decoration: none; }
+</style>
+
+<div class="wrap">
+  <a class="brand" href="index.html" aria-label="Hearth Kitchen Co. home"><span class="name">Hearth</span><span class="co">KITCHEN CO.</span></a>
+  <div class="card" id="card" aria-live="polite"></div>
+  <p class="foot">Nourishing your body starts with how you treat your food.</p>
+</div>
+
+<script>
+var GROUPS = [
+  ['pantry', 'Pantry staples', 'Tick everything you already have. I’ll bring the rest in small glass jars, chosen for the way you cook.', [
+    'Extra-virgin olive oil', 'Avocado or neutral oil', 'Apple cider vinegar', 'Balsamic vinegar', 'Kosher salt', 'Flaky sea salt', 'Black peppercorns and a grinder',
+    'Garlic powder', 'Onion powder', 'Smoked paprika', 'Cumin', 'Dried oregano', 'Chili flakes', 'Cinnamon',
+    'Flour (or gluten-free flour)', 'Cornstarch', 'Baking powder', 'Baking soda', 'Broth or broth base', 'Dijon mustard', 'Soy sauce or tamari', 'Raw honey']],
+  ['tools', 'Kitchen tools', 'So I know what to bring with me on prep day.', [
+    'Sheet pans', 'Glass or ceramic baking dishes', 'Large pot', 'Large skillet', 'Dutch oven', 'Chef’s knife', 'Large cutting board',
+    'Mixing bowls', 'Measuring cups and spoons', 'Blender', 'Food processor', 'Stand or hand mixer']]
+];
+var QS = [
+  ['shelf', 'Can we clear one shelf in your fridge just for your Hearth meals?'],
+  ['fridge2', 'Do you have a second refrigerator or a garage fridge?'],
+  ['freezer', 'Is there room in your freezer for a few meals?']
+];
+var state = { name: '', have: {}, yn: {}, brands: '', clear: '' };
+var card = document.getElementById('card');
+function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+function key(g, i) { return g + '-' + i; }
+function render() {
+  var h = '<p class="eyebrow">Before your Kitchen Reset</p><h1>Let’s see what’s already in your kitchen.</h1>' +
+    '<p class="lede">A few minutes here saves time on our first visit, and means I only bring what you truly need. Nothing here needs to be perfect.</p>' +
+    '<div class="field"><label for="cname">Your name</label><input type="text" id="cname" autocomplete="name" value="' + esc(state.name) + '"></div>';
+  GROUPS.forEach(function (g) {
+    var have = g[3].filter(function (_, i) { return state.have[key(g[0], i)]; }).length;
+    h += '<section class="group" aria-labelledby="h-' + g[0] + '"><h2 id="h-' + g[0] + '">' + g[1] + '</h2><p class="lede">' + g[2] + '</p>' +
+      '<p class="count" id="count-' + g[0] + '">' + have + ' of ' + g[3].length + ' ticked</p><div class="checks">';
+    g[3].forEach(function (item, i) {
+      var id = key(g[0], i);
+      h += '<label class="check" for="c-' + id + '"><input type="checkbox" id="c-' + id + '" data-k="' + id + '"' + (state.have[id] ? ' checked' : '') + '><span>' + esc(item) + '</span></label>';
+    });
+    h += '</div></section>';
+  });
+  h += '<section class="group"><h2>Space in your kitchen</h2>';
+  QS.forEach(function (q) {
+    h += '<div class="q"><p>' + esc(q[1]) + '</p><div class="yn" role="radiogroup" aria-label="' + esc(q[1]) + '">' +
+      ['Yes', 'No', 'Not sure'].map(function (v) { return '<label><input type="radio" name="' + q[0] + '" value="' + v + '"' + (state.yn[q[0]] === v ? ' checked' : '') + '>' + v + '</label>'; }).join('') + '</div></div>';
+  });
+  h += '</section>' +
+    '<section class="group"><h2>A few more things</h2>' +
+    '<div class="field"><label for="brands">Favorite brands or anything you always like stocked</label><textarea id="brands" placeholder="For example: Kerrygold butter, a certain olive oil, oat milk">' + esc(state.brands) + '</textarea></div>' +
+    '<div class="field"><label for="clear">Anything you’d like me to use up or clear out?</label><textarea id="clear" placeholder="For example: the spices in the top cabinet are old">' + esc(state.clear) + '</textarea></div></section>' +
+    '<div class="contact"><p><strong>All set?</strong> Send this to me and I’ll shop for your Kitchen Reset.</p>' +
+    '<div class="send"><a class="btn" id="send" href="' + mailto() + '">Send to Chef Jordan</a><button type="button" class="copy" id="copy">Copy my list</button></div>' +
+      '<div id="planBox" hidden><p class="note">Your list, ready to copy and email to jordansrowlan@gmail.com:</p><pre class="plantext" id="planText"></pre></div>' +
+    '<p class="note">If your email doesn\u2019t open, copy the text below and email it to me. You can also reach me at <span class="sel">918-968-5002</span> or <span class="sel">jordansrowlan@gmail.com</span>.</p></div>';
+  card.innerHTML = h;
+  bind();
+}
+function summary() {
+  var L = ['Kitchen Reset checklist from ' + (state.name.trim() || 'a client'), ''];
+  GROUPS.forEach(function (g) {
+    var has = [], need = [];
+    g[3].forEach(function (item, i) { (state.have[key(g[0], i)] ? has : need).push(item); });
+    L.push(g[1].toUpperCase());
+    L.push((g[0] === 'pantry' ? 'To buy: ' : 'To bring: ') + (need.length ? need.join(', ') : 'nothing'));
+    L.push('Already has: ' + (has.length ? has.join(', ') : 'none'));
+    L.push('');
+  });
+  L.push('SPACE');
+  QS.forEach(function (q) { L.push(q[1] + ' ' + (state.yn[q[0]] || 'no answer')); });
+  if (state.brands.trim()) { L.push(''); L.push('Favorite brands: ' + state.brands.trim()); }
+  if (state.clear.trim()) L.push('Use up or clear out: ' + state.clear.trim());
+  return L.join('\n');
+}
+function mailto() { return 'mailto:jordansrowlan@gmail.com?subject=' + encodeURIComponent('Kitchen Reset checklist: ' + (state.name.trim() || 'new client')) + '&body=' + encodeURIComponent(summary()); }
+function refreshSend() { var a = document.getElementById('send'); if (a) a.href = mailto(); }
+function bind() {
+  card.querySelectorAll('input[data-k]').forEach(function (el) {
+    el.addEventListener('change', function () {
+      state.have[el.getAttribute('data-k')] = el.checked;
+      GROUPS.forEach(function (g) {
+        var c = document.getElementById('count-' + g[0]);
+        if (c) c.textContent = g[3].filter(function (_, i) { return state.have[key(g[0], i)]; }).length + ' of ' + g[3].length + ' ticked';
+      });
+      refreshSend();
+    });
+  });
+  card.querySelectorAll('.yn input').forEach(function (el) { el.addEventListener('change', function () { state.yn[el.name] = el.value; refreshSend(); }); });
+  [['cname', 'name'], ['brands', 'brands'], ['clear', 'clear']].forEach(function (p) {
+    var el = document.getElementById(p[0]); if (el) el.addEventListener('input', function () { state[p[1]] = el.value; refreshSend(); });
+  });
+  var sp = document.getElementById('send');
+  if (sp) sp.addEventListener('click', function () {
+    var box = document.getElementById('planBox'), pt = document.getElementById('planText');
+    if (box && pt) { pt.textContent = summary(); box.hidden = false; }
+  });
+  var cp = document.getElementById('copy');
+  if (cp) cp.addEventListener('click', function () {
+    var lab = cp.textContent;
+    try { navigator.clipboard.writeText(summary()).then(function () { cp.textContent = 'Copied'; setTimeout(function () { cp.textContent = lab; }, 1600); }, function () { cp.textContent = 'Copy not available here'; }); } catch (e) { cp.textContent = 'Copy not available here'; }
+  });
+}
+render();
+</script>
+
+</html>

@@ -236,8 +236,17 @@ var DETAIL_HINT = {
 };
 var WEEK = ['Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 var ADD = { bread: 40, sweet: 35, little: 25, earth: 100, third: 100 };
-// Kitchen Reset: about 4 hours of reset time ($220) + starter pantry ($80) + glassware, rounded up to $25, then +$25 for the tailored pantry (now $110)
-var RESET_BASE = 300, PANTRY_UPGRADE = 25, CONTAINER = 3.75, SHOT_BOTTLE = 45.52 / 80, SHOTS_PER_PERSON = 7;
+// Kitchen Reset prices by plan, serving style and household size; each list is indexed by the number of Little Plates
+var RESET = {
+  taste: { single: {1:[375],2:[400],3:[425],4:[450],5:[500],6:[525],7:[550],8:[575],9:[600],10:[650],11:[675],12:[700]},
+             family: {1:[375],2:[400,425],3:[400,450,475],4:[425,475,500,525],5:[450,475,500,525,550],6:[450,475,500,525,550,575],7:[450,475,500,525,550,575,600],8:[450,475,500,525,550,575,600,625],9:[450,475,500,525,550,600,625,650,675],10:[450,500,525,550,575,600,625,650,675,700],11:[475,500,525,550,575,600,625,650,675,700,725],12:[475,500,525,550,575,600,625,650,675,700,725,750]} },
+  gather: { single: {1:[375],2:[425],3:[475],4:[525],5:[575],6:[600],7:[650],8:[700],9:[750],10:[800],11:[825],12:[875]},
+             family: {1:[375],2:[450,475],3:[450,500,525],4:[475,525,575,600],5:[500,525,575,625,650],6:[500,525,575,625,650,700],7:[500,550,575,625,650,700,750],8:[500,550,575,625,675,700,750,800],9:[500,550,600,625,675,700,750,800,825],10:[500,550,600,625,675,725,750,800,850,875],11:[525,550,600,625,675,725,750,800,850,875,925],12:[525,550,600,650,675,725,775,800,850,900,925,975]} },
+  harvest: { single: {1:[400],2:[450],3:[500],4:[575],5:[625],6:[675],7:[725],8:[800],9:[850],10:[900],11:[950],12:[1025]},
+             family: {1:[400],2:[475,525],3:[475,525,575],4:[525,575,625,675],5:[525,575,625,675,725],6:[525,575,625,675,750,800],7:[525,575,650,700,750,800,850],8:[525,600,650,700,750,800,850,900],9:[550,600,650,700,750,800,850,900,950],10:[550,600,650,700,750,800,850,925,975,1025],11:[550,600,650,700,750,800,875,925,975,1025,1075],12:[550,600,650,700,775,825,875,925,975,1025,1075,1125]} },
+  harvestThirdPrep: {5:550, 6:575, 7:625, 8:675, 9:700, 10:750, 11:800, 12:825}
+};
+var SHOTS_PER_PERSON = 7;
 
 function fresh() {
   return { i: 0, name: '', family: '', birthday: '', email: '', phone: '', hp: '', sendStatus: '', sentSummary: '', season: null, plan: null, people: null, adults: 1, children: 0, ages: [],
@@ -278,10 +287,10 @@ function glassCounts() {
   return { family: fam, dishes: fam ? batch + 2 : 0, singles: fam ? (batch + 2) * littleCount() : (batch + 2) * n, shots: SHOTS_PER_PERSON * n };
 }
 function resetFee() {
-  var n = headCount(), g = glassCounts();
-  var glass = g.dishes * (n <= 3 ? 9 : 12) + g.singles * CONTAINER;
-  glass += g.shots * SHOT_BOTTLE;
-  return Math.ceil((RESET_BASE + glass) / 25) * 25 + PANTRY_UPGRADE;
+  var n = Math.min(Math.max(headCount(), 1), 12);
+  if (thirdPrep()) return RESET.harvestThirdPrep[Math.max(n, 5)];
+  var row = RESET[state.plan][styleOf()][n], lc = littleCount();
+  return row[Math.min(lc, row.length - 1)];
 }
 function addons() {
   var a = [];

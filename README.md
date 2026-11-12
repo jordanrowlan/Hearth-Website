@@ -16,6 +16,8 @@ Hearth Kitchen Co., LLC is owned and run by Chef Jordan Rowlan in Broken Arrow, 
 | Home | `index.html` | Jordan's portrait, Hearth's services, and the Thanksgiving pre-order banner |
 | My Story | `story.html` | Jordan's story: *"Food has always meant family to me."* |
 | Thanksgiving | `thanksgiving.html` | Thanksgiving 2026 menu with a cart and secure Stripe checkout |
+| Find Your Plan | `quiz.html` | A short quiz that builds a personal meal prep plan with prices, and sends it to Jordan |
+| Kitchen Reset Checklist | `checklist.html` | Not in the menu. Jordan sends new clients the link before their reset visit |
 | Contact | `contact.html` | Inquiry form for meal prep, events and wellness shots |
 | Pay Invoice | `pay.html` | Lets clients pay an invoice by card through Stripe |
 | Thank You | `thanks.html` | Shown after a successful order |
