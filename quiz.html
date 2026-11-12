@@ -830,7 +830,7 @@ function paintSend() {
   var box = document.getElementById('planBox'), pt = document.getElementById('planText');
   var st = state.sendStatus;
   msg.className = st === 'failed' ? 'warn' : '';
-  msg.textContent = st === 'sent' ? 'Your plan is on its way to your inbox, and I have a copy too. I\u2019ll reach out soon to find a time for your call. With love, Jordan.'
+  msg.textContent = st === 'sent' ? 'Your plan is on its way to your inbox, and I have a copy too. I\u2019ll reach out in the next 1 to 2 days to find a time for your call. With love, Jordan.'
     : st === 'failed' ? 'I\u2019m so sorry, your plan didn\u2019t send. Your plan is below: copy it and email it to me, or text me at 918-968-5002 and I\u2019ll take it from there.'
     : 'Sending your plan to your inbox\u2026';
   var fail = document.getElementById('sendFail'); if (fail) fail.hidden = st !== 'failed';
