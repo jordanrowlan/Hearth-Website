@@ -649,19 +649,23 @@ function resultHTML() {
     '<div class="nav"><button class="btn ghost" id="restart" type="button">Start over</button><span></span></div>';
 }
 
-function summaryText() {
+// summaryText(true) is Jordan's private copy (birthday, astrology, numerology, glassware notes).
+// summaryText() is the client's copy: never put private notes in it.
+function summaryText(forJordan) {
   var now = new Date();
   var p = TIERS[state.plan], n = headCount(), adds = addons();
   var full = state.name.trim() + (state.family.trim() ? ' ' + state.family.trim() : '');
   var L = [], sec = function (t) { L.push(''); L.push(t.toUpperCase()); };
   var S = {}; SEASONS.forEach(function (s) { S[s[0]] = s[1]; });
-  L.push('New Hearth quiz from ' + full);
+  var her = forJordan ? 'Her ' : 'Your ';
+  L.push(forJordan ? 'New Hearth quiz from ' + full : 'Your Hearth plan, ' + full);
   L.push('Taken ' + WEEKDAYS[now.getDay()] + ', ' + prettyDate(now.getFullYear(), now.getMonth() + 1, now.getDate()));
-  var bp = birthdayProfile(now);
-  sec('About ' + state.name.trim());
-  if (state.season) L.push('Season: ' + S[state.season]);
-  bp.forEach(function (x) { L.push(x); });
-  sec('Her plan');
+  if (forJordan) {
+    sec('About ' + state.name.trim());
+    if (state.season) L.push('Season: ' + S[state.season]);
+    birthdayProfile(now).forEach(function (x) { L.push(x); });
+  } else if (state.season) { L.push(''); L.push('Your season: ' + S[state.season]); }
+  sec(her + 'plan');
   L.push(p.name + ': ' + p.meals + ', for ' + n + (n === 1 ? ' person' : ' people') + (state.people === 6 ? ' (6 or more; confirm on the call)' : ''));
   if (n > 1) L.push('Portions: ' + (styleOf() === 'family' ? 'family-style' : 'single servings') + (bigHarvest() && state.style === 'single' ? (state.fridge === 'yes' ? ' (has a second fridge)' : ' (no second fridge, so a third prep day)') : ''));
   L.push('Service fee: ' + money(weekly()) + '/week');
@@ -670,11 +674,11 @@ function summaryText() {
   L.push('Grocery fund (paid ahead): ' + money(groceries()) + '/month or about ' + money(groceriesWeekly()) + '/week');
   L.push('Kitchen Reset (paid ahead): ' + money(resetFee()));
   var gc = glassCounts();
-  L.push('Glassware to bring: ' + [gc.dishes ? gc.dishes + ' family dishes' : '', gc.singles ? gc.singles + ' single containers' + (gc.family ? ' (Little Plates)' : '') : '', gc.shots + ' shot bottles'].filter(Boolean).join(', '));
+  L.push((forJordan ? 'Glassware to bring: ' : 'Glassware that\u2019s yours to keep: ') + [gc.dishes ? gc.dishes + ' family dishes' : '', gc.singles ? gc.singles + ' single containers' + (gc.family ? ' (Little Plates)' : '') : '', gc.shots + ' shot bottles'].filter(Boolean).join(', '));
   L.push('Service fee billed weekly, after each week\u2019s service');
   L.push('All in, each week (service + groceries): about ' + money(weeklyTotal() + groceriesWeekly()));
   if (state.people > 1) {
-    sec('Her table');
+    sec(her + 'table');
     L.push(state.adults + (state.adults === 1 ? ' adult' : ' adults') + (state.children ? ', ' + state.children + (state.children === 1 ? ' child' : ' children') + ' (' + (state.children === 1 ? 'age ' : 'ages ') + state.ages.map(ageWord).join(', ') + ')' : ''));
     if (littleCount()) L.push('Little Plates for: ' + state.little.map(function (v, k) { return v ? 'child ' + (k + 1) + ' (age ' + ageWord(state.ages[k]) + ')' : null; }).filter(Boolean).join(', '));
   }
@@ -838,7 +842,7 @@ function autoSend() {
   state.sendStatus = 'sending'; state.sentSummary = summary; paintSend();
   var full = state.name.trim() + (state.family.trim() ? ' ' + state.family.trim() : '');
   fetch('https://hearth-checkout.jordansrowlan.workers.dev/send-plan', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name: full, email: state.email.trim(), phone: state.phone.trim(), summary: summary, website: state.hp }) })
+    body: JSON.stringify({ name: full, email: state.email.trim(), phone: state.phone.trim(), summary: summary, jordanSummary: summaryText(true), website: state.hp }) })
     .then(function (r) { return r.json().then(function (d) { if (!r.ok || !d.ok) throw new Error(d.error || 'failed'); }); })
     .then(function () { state.sendStatus = 'sent'; paintSend(); })
     .catch(function () { state.sendStatus = 'failed'; paintSend(); });
