@@ -207,7 +207,7 @@ input[type="date"] { font: inherit; color: var(--fg); background: var(--card); b
 
 <script>
 var TIERS = {
-  taste: { name: 'A Taste of Hearth', meals: 'Dinner, 5 days a week', blurb: 'An easy first step into eating well: five nourishing dinners waiting in your fridge each week.', price: [550, 700, 150], groc: 375, batch: 5, preps: 1 },
+  taste: { name: 'A Taste of Hearth', meals: '5 meals a week, enjoyed whenever you like', blurb: 'An easy first step into eating well: five nourishing meals waiting in your fridge each week, ready whenever you want them.', price: [550, 700, 150], groc: 375, batch: 5, preps: 1 },
   gather: { name: 'Gather', meals: 'Breakfast, lunch and dinner, 5 days a week', blurb: 'Your weekday meals, handled, with room left for nights out with the people you love.', price: [895, 1100, 200], groc: 540, batch: 9, preps: 2 },
   harvest: { name: 'Full Harvest', meals: 'Breakfast, lunch and dinner, every day of the week', blurb: 'Every meal, every day. Nothing left to think about but the table.', price: [975, 1200, 225], groc: 650, batch: 12, preps: 2 }
 };
@@ -380,7 +380,7 @@ function render() {
     h += progress() + '<h1>How much would you love me to take off your plate?</h1>' +
       '<p class="lede">Every meal is stacked in your fridge, ready to heat, and never tied to a certain day. Eat what you like, when you like.</p>' +
       '<div class="options" role="group" aria-label="Meals">' +
-      opt('plan', 'taste', 'Help with dinners', 'Five dinners a week. A gentle first step.') +
+      opt('plan', 'taste', 'A little help each week', 'Five meals a week, for whenever you want them. A gentle first step.') +
       opt('plan', 'gather', 'My weekdays, with nights out', 'Breakfast, lunch and dinner for five days. Weekends and dinners out are yours.') +
       opt('plan', 'harvest', 'Every meal, every day of the week', 'Breakfast, lunch and dinner, seven days. Nothing left to think about.') +
       '</div>' + nav(!!state.plan);
@@ -457,7 +457,7 @@ function render() {
     var p = TIERS[state.plan], preps = p.preps + (thirdPrep() ? 1 : 0);
     h += progress() + '<h1>Which days work best for your prep ' + (preps > 1 ? 'days' : 'day') + '?</h1>' +
       '<p class="lede">I prep Tuesday through Saturday. Tap the days in order, starting with the one that works best, and leave out any that don’t work. ' +
-      (preps === 1 ? 'Your Milkmaid visit for fresh wellness shots comes a few days after prep day.' : 'Your plan has ' + preps + ' prep days a week, spaced 3 to 4 days apart' + (preps > 2 ? ' where possible' : '') + ', so I’ll pair your favorite days.') + '</p>' +
+      (preps === 1 ? 'Your Milkmaid visit comes a few days after prep day: I drop off a fresh batch of wellness shots and take your empty glass bottles home to wash and refill.' : 'Your plan has ' + preps + ' prep days a week, spaced 3 to 4 days apart' + (preps > 2 ? ' where possible' : '') + ', so I’ll pair your favorite days.') + '</p>' +
       '<div class="days" role="group" aria-label="Prep day preferences">';
     WEEK.forEach(function (d) {
       var r = state.days.indexOf(d);
@@ -474,7 +474,7 @@ function render() {
       opt('access', 'key', 'A key or lockbox', 'We’ll arrange it on our call') +
       opt('access', 'later', 'I’m not sure yet', 'We’ll figure it out together') +
       '</div>' +
-      (taste ? '<h2>Where should your Milkmaid delivery go?</h2><div class="options" role="group" aria-label="Milkmaid delivery">' +
+      (taste ? '<h2>Where should your Milkmaid delivery go?</h2><p class="lede">Like the milkman of old: midweek, I drop off fresh-pressed wellness shots in glass bottles and carry your empties home to wash and refill. Shots are at their best for 3 to 4 days, so this keeps yours fresh all week.</p><div class="options" role="group" aria-label="Milkmaid delivery">' +
         opt('drop', 'fridge', 'Straight into my fridge', 'Fresh shots in, empty glass out') +
         opt('drop', 'cooler', 'A cooler by the door', 'Leave the empties in the cooler for me') + '</div>' : '') +
       '<h2>Any pets at home?</h2><div class="chips" role="group" aria-label="Pets">' + opt('pets', 'yes', 'Yes', '') + opt('pets', 'no', 'No', '') + '</div>' +
@@ -643,6 +643,7 @@ function resultHTML() {
       '<div id="shareBox" hidden><p class="note">Ready to copy and send:</p><pre class="plantext" id="shareText"></pre></div></div>' : '') +
     '<div class="contact"><p><strong>Let’s begin with a welcome call, ' + esc(displayName()) + '.</strong> I’ll reach out to find a time that suits you.</p>' +
       '<p class="note" id="sendMsg" role="status"></p>' +
+      '<div id="nextStep" class="send" hidden><a class="btn" href="checklist.html">Next: your Kitchen Reset checklist</a></div>' +
       '<div class="send"><button type="button" class="btn" id="sendPlan" hidden>Try again</button><button type="button" class="copy" id="copyPlan">Copy my plan</button></div>' +
       '<div id="planBox" hidden><p class="note">Your plan, ready to copy and email to jordansrowlan@gmail.com:</p><pre class="plantext" id="planText"></pre></div>' +
       '<p class="note" id="sendHelp" hidden>You can also copy your plan and email it to me. You can also reach me at <span class="sel">918-968-5002</span> or <span class="sel">jordansrowlan@gmail.com</span>.</p></div>' +
@@ -832,6 +833,8 @@ function paintSend() {
     : st === 'failed' ? 'I\u2019m so sorry, your plan didn\u2019t send. Your plan is below: copy it and email it to me, or text me at 918-968-5002 and I\u2019ll take it from there.'
     : 'Sending your plan to your inbox\u2026';
   if (sp) sp.hidden = st !== 'failed';
+  var nx = document.getElementById('nextStep'); if (nx) nx.hidden = st !== 'sent';
+  if (st === 'sent') { try { sessionStorage.setItem('hearthClient', JSON.stringify({ name: state.name.trim() + (state.family.trim() ? ' ' + state.family.trim() : ''), email: state.email.trim() })); } catch (e) {} }
   if (help) help.hidden = st !== 'failed';
   if (st === 'failed' && box && pt) { pt.textContent = summaryText(); box.hidden = false; }
 }

@@ -85,9 +85,9 @@ h2 { font-size: 22px; line-height: 1.25; }
 .stepper output { font-family: var(--display); font-size: 24px; min-width: 24px; text-align: center; font-variant-numeric: tabular-nums; }
 .ages { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
 .ages label, .field label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); }
-select, textarea, input[type="text"] { font: inherit; color: var(--fg); background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; min-height: 44px; width: 100%; }
+select, textarea, input[type="text"], input[type="email"] { font: inherit; color: var(--fg); background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; min-height: 44px; width: 100%; }
 textarea { min-height: 84px; resize: vertical; }
-select:focus-visible, textarea:focus-visible, input[type="text"]:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+select:focus-visible, textarea:focus-visible, input[type="text"]:focus-visible, input[type="email"]:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
 .field { display: flex; flex-direction: column; gap: 6px; }
 .warn { margin: 0; font-size: 13px; color: var(--terra); }
 .nav { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
@@ -166,6 +166,7 @@ textarea { min-height: 84px; resize: vertical; }
 .foot { text-align: center; font-family: var(--display); font-style: italic; color: var(--terra); margin: 0; }
 @media (prefers-reduced-motion: reduce) { .opt { transition: none; } }
 .brand { text-decoration: none; }
+[hidden] { display: none !important; }
 </style>
 
 <div class="wrap">
@@ -189,14 +190,18 @@ var QS = [
   ['fridge2', 'Do you have a second refrigerator or a garage fridge?'],
   ['freezer', 'Is there room in your freezer for a few meals?']
 ];
-var state = { name: '', have: {}, yn: {}, brands: '', clear: '' };
+var state = { name: '', email: '', hp: '', have: {}, yn: {}, brands: '', clear: '', sendStatus: '' };
+// Fill in name and email if she just came from the plan quiz (kept only in this browser tab).
+try { var qc = JSON.parse(sessionStorage.getItem('hearthClient') || 'null'); if (qc) { state.name = qc.name || ''; state.email = qc.email || ''; } } catch (e) {}
 var card = document.getElementById('card');
 function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 function key(g, i) { return g + '-' + i; }
 function render() {
   var h = '<p class="eyebrow">Before your Kitchen Reset</p><h1>Let’s see what’s already in your kitchen.</h1>' +
     '<p class="lede">A few minutes here saves time on our first visit, and means I only bring what you truly need. Nothing here needs to be perfect.</p>' +
-    '<div class="field"><label for="cname">Your name</label><input type="text" id="cname" autocomplete="name" value="' + esc(state.name) + '"></div>';
+    '<div class="field"><label for="cname">Your name</label><input type="text" id="cname" autocomplete="name" value="' + esc(state.name) + '"></div>' +
+    '<div class="field"><label for="cemail">Your email (optional)</label><input type="email" id="cemail" autocomplete="email" inputmode="email" value="' + esc(state.email) + '"></div>' +
+    '<input type="text" id="hkWebsite" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">';
   GROUPS.forEach(function (g) {
     var have = g[3].filter(function (_, i) { return state.have[key(g[0], i)]; }).length;
     h += '<section class="group" aria-labelledby="h-' + g[0] + '"><h2 id="h-' + g[0] + '">' + g[1] + '</h2><p class="lede">' + g[2] + '</p>' +
@@ -217,9 +222,10 @@ function render() {
     '<div class="field"><label for="brands">Favorite brands or anything you always like stocked</label><textarea id="brands" placeholder="For example: Kerrygold butter, a certain olive oil, oat milk">' + esc(state.brands) + '</textarea></div>' +
     '<div class="field"><label for="clear">Anything you’d like me to use up or clear out?</label><textarea id="clear" placeholder="For example: the spices in the top cabinet are old">' + esc(state.clear) + '</textarea></div></section>' +
     '<div class="contact"><p><strong>All set?</strong> Send this to me and I’ll shop for your Kitchen Reset.</p>' +
-    '<div class="send"><a class="btn" id="send" href="' + mailto() + '">Send to Chef Jordan</a><button type="button" class="copy" id="copy">Copy my list</button></div>' +
+    '<div class="send"><button type="button" class="btn" id="send">Send to Chef Jordan</button><button type="button" class="copy" id="copy">Copy my list</button></div>' +
+    '<p class="note" id="sendMsg" role="status" hidden></p>' +
       '<div id="planBox" hidden><p class="note">Your list, ready to copy and email to jordansrowlan@gmail.com:</p><pre class="plantext" id="planText"></pre></div>' +
-    '<p class="note">If your email doesn\u2019t open, copy the text below and email it to me. You can also reach me at <span class="sel">918-968-5002</span> or <span class="sel">jordansrowlan@gmail.com</span>.</p></div>';
+    '<p class="note" id="sendHelp">If sending doesn\u2019t work, copy your list and email it to me. You can also reach me at <span class="sel">918-968-5002</span> or <span class="sel">jordansrowlan@gmail.com</span>.</p></div>';
   card.innerHTML = h;
   bind();
 }
@@ -239,8 +245,7 @@ function summary() {
   if (state.clear.trim()) L.push('Use up or clear out: ' + state.clear.trim());
   return L.join('\n');
 }
-function mailto() { return 'mailto:jordansrowlan@gmail.com?subject=' + encodeURIComponent('Kitchen Reset checklist: ' + (state.name.trim() || 'new client')) + '&body=' + encodeURIComponent(summary()); }
-function refreshSend() { var a = document.getElementById('send'); if (a) a.href = mailto(); }
+function refreshSend() { var a = document.getElementById('send'), m = document.getElementById('sendMsg'); if (a && state.sendStatus === 'sent') { state.sendStatus = ''; a.disabled = false; a.textContent = 'Send my updates'; if (m) m.hidden = true; } }
 function bind() {
   card.querySelectorAll('input[data-k]').forEach(function (el) {
     el.addEventListener('change', function () {
@@ -253,13 +258,29 @@ function bind() {
     });
   });
   card.querySelectorAll('.yn input').forEach(function (el) { el.addEventListener('change', function () { state.yn[el.name] = el.value; refreshSend(); }); });
-  [['cname', 'name'], ['brands', 'brands'], ['clear', 'clear']].forEach(function (p) {
+  [['cname', 'name'], ['cemail', 'email'], ['hkWebsite', 'hp'], ['brands', 'brands'], ['clear', 'clear']].forEach(function (p) {
     var el = document.getElementById(p[0]); if (el) el.addEventListener('input', function () { state[p[1]] = el.value; refreshSend(); });
   });
   var sp = document.getElementById('send');
   if (sp) sp.addEventListener('click', function () {
+    var msg = document.getElementById('sendMsg'), help = document.getElementById('sendHelp');
     var box = document.getElementById('planBox'), pt = document.getElementById('planText');
-    if (box && pt) { pt.textContent = summary(); box.hidden = false; }
+    if (!state.name.trim()) { msg.className = 'warn'; msg.hidden = false; msg.textContent = 'Please add your name at the top first.'; document.getElementById('cname').focus(); return; }
+    sp.disabled = true; sp.textContent = 'Sending\u2026'; msg.hidden = true; state.sendStatus = 'sending';
+    fetch('https://hearth-checkout.jordansrowlan.workers.dev/send-checklist', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: state.name.trim(), email: state.email.trim(), summary: summary(), website: state.hp }) })
+      .then(function (r) { return r.json().then(function (d) { if (!r.ok || !d.ok) throw new Error(d.error || 'failed'); }); })
+      .then(function () {
+        state.sendStatus = 'sent'; sp.textContent = 'Sent'; msg.className = 'note'; msg.hidden = false;
+        msg.textContent = 'Thank you! Your checklist is on its way to me, and I\u2019ll shop for your Kitchen Reset. With love, Jordan.';
+        if (help) help.hidden = true;
+      })
+      .catch(function () {
+        state.sendStatus = 'failed'; sp.disabled = false; sp.textContent = 'Try again';
+        msg.className = 'warn'; msg.hidden = false;
+        msg.textContent = 'I\u2019m so sorry, your checklist didn\u2019t send. Your list is below: copy it and email it to me, or text me at 918-968-5002.';
+        if (box && pt) { pt.textContent = summary(); box.hidden = false; }
+      });
   });
   var cp = document.getElementById('copy');
   if (cp) cp.addEventListener('click', function () {
