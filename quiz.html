@@ -189,6 +189,7 @@ input[type="date"] { font: inherit; color: var(--fg); background: var(--card); b
 .more .note { margin-top: 10px; }
 .foot { text-align: center; font-family: var(--display); font-style: italic; color: var(--terra); margin: 0; }
 @media (prefers-reduced-motion: reduce) { .opt { transition: none; } }
+[hidden] { display: none !important; }
 .sitebar { max-width: 580px; margin: 0 auto 8px; display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: flex-end; font-size: 13px; }
 .sitebar a { color: var(--muted); text-decoration: none; }
 .sitebar a:hover { color: var(--terra); text-decoration: underline; }
@@ -239,7 +240,7 @@ var ADD = { bread: 40, sweet: 35, little: 25, earth: 100, third: 100 };
 var RESET_BASE = 300, PANTRY_UPGRADE = 25, CONTAINER = 3.75, SHOT_BOTTLE = 45.52 / 80, SHOTS_PER_PERSON = 7;
 
 function fresh() {
-  return { i: 0, name: '', family: '', birthday: '', email: '', phone: '', season: null, plan: null, people: null, adults: 1, children: 0, ages: [],
+  return { i: 0, name: '', family: '', birthday: '', email: '', phone: '', hp: '', sendStatus: '', sentSummary: '', season: null, plan: null, people: null, adults: 1, children: 0, ages: [],
     style: null, fridge: null, diet: {}, detail: {}, bread: false, sweet: false, none: false, little: [], earth: null,
     days: [], access: null, drop: null, pets: null, accessNote: '' };
 }
@@ -355,7 +356,8 @@ function render() {
     h += progress() + '<h1>Let’s start with you.</h1>' +
       '<p class="lede">A few gentle questions, and I’ll put together a plan made for your home.</p>' +
       '<div class="field"><label for="firstName">Your first name</label><input id="firstName" type="text" autocomplete="given-name" value="' + esc(state.name) + '"></div>' +
-      '<div class="field"><label for="email">Your email</label><input id="email" type="email" autocomplete="email" inputmode="email" value="' + esc(state.email) + '"></div>' +
+      '<div class="field"><label for="email">Your email</label><input id="email" type="email" autocomplete="email" inputmode="email" value="' + esc(state.email) + '"><small class="hint">I\u2019ll email your plan to you as soon as you finish.</small></div>' +
+      '<input type="text" id="hkWebsite" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" value="' + esc(state.hp) + '">' +
       '<div class="field"><label for="phone">Your cell phone</label><input id="phone" type="tel" autocomplete="tel" inputmode="tel" value="' + esc(state.phone) + '"><small class="hint">So I can text you about your welcome call.</small></div>' +
       '<div class="field"><label for="familyName">Your family name (optional)</label><input id="familyName" type="text" autocomplete="family-name" value="' + esc(state.family) + '"></div>' +
       '<div class="field"><label for="birthday">Your birthday (optional)</label><input id="birthday" type="date" autocomplete="bday" value="' + esc(state.birthday) + '"><small class="hint">So I can celebrate you.</small></div>' +
@@ -630,12 +632,11 @@ function resultHTML() {
     (n > 1 ? '<div class="share"><h3>Talking it over at home?</h3><p>Here’s a simple summary to send to your husband or partner: what it costs, what it covers and how you’ll pay.</p>' +
       '<div class="send"><button type="button" class="btn ghost" id="sharePlan">Share with someone at home</button></div>' +
       '<div id="shareBox" hidden><p class="note">Ready to copy and send:</p><pre class="plantext" id="shareText"></pre></div></div>' : '') +
-    '<div class="contact"><p><strong>Let’s begin with a welcome call, ' + esc(displayName()) + '.</strong> Send me your plan and I’ll reach out to find a time that suits you.</p>' +
-      '<div class="send"><button type="button" class="btn" id="sendPlan">Send my plan</button><button type="button" class="copy" id="copyPlan">Copy my plan</button></div>' +
-      '<input type="text" id="hkWebsite" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">' +
-      '<p class="note" id="sendMsg" role="status" hidden></p>' +
+    '<div class="contact"><p><strong>Let’s begin with a welcome call, ' + esc(displayName()) + '.</strong> I’ll reach out to find a time that suits you.</p>' +
+      '<p class="note" id="sendMsg" role="status"></p>' +
+      '<div class="send"><button type="button" class="btn" id="sendPlan" hidden>Try again</button><button type="button" class="copy" id="copyPlan">Copy my plan</button></div>' +
       '<div id="planBox" hidden><p class="note">Your plan, ready to copy and email to jordansrowlan@gmail.com:</p><pre class="plantext" id="planText"></pre></div>' +
-      '<p class="note" id="sendHelp">If sending doesn\u2019t work, copy your plan and email it to me. You can also reach me at <span class="sel">918-968-5002</span> or <span class="sel">jordansrowlan@gmail.com</span>.</p></div>' +
+      '<p class="note" id="sendHelp" hidden>You can also copy your plan and email it to me. You can also reach me at <span class="sel">918-968-5002</span> or <span class="sel">jordansrowlan@gmail.com</span>.</p></div>' +
     '<div class="nav"><button class="btn ghost" id="restart" type="button">Start over</button><span></span></div>';
 }
 
@@ -787,27 +788,11 @@ function bind() {
   var an = document.getElementById('accessNote'); if (an) an.addEventListener('input', function () { state.accessNote = an.value; });
   card.querySelectorAll('[data-who]').forEach(function (el) { el.addEventListener('input', function () { det(el.getAttribute('data-who')).who = el.value; }); });
   card.querySelectorAll('[data-what]').forEach(function (el) { el.addEventListener('input', function () { det(el.getAttribute('data-what')).what = el.value; }); });
+  var hpEl = document.getElementById('hkWebsite'); if (hpEl) hpEl.addEventListener('input', function () { state.hp = hpEl.value; });
   var sp = document.getElementById('sendPlan');
-  if (sp) sp.addEventListener('click', function () {
-    var msg = document.getElementById('sendMsg'), hp = document.getElementById('hkWebsite');
-    var full = state.name.trim() + (state.family.trim() ? ' ' + state.family.trim() : '');
-    sp.disabled = true; sp.textContent = 'Sending\u2026'; msg.hidden = true;
-    fetch('https://hearth-checkout.jordansrowlan.workers.dev/send-plan', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: full, email: state.email.trim(), phone: state.phone.trim(), summary: summaryText(), website: hp ? hp.value : '' }) })
-      .then(function (r) { return r.json().then(function (d) { if (!r.ok || !d.ok) throw new Error(d.error || 'failed'); }); })
-      .then(function () {
-        sp.textContent = 'Sent'; msg.className = 'note'; msg.hidden = false;
-        var help = document.getElementById('sendHelp'); if (help) help.hidden = true;
-        msg.textContent = 'Your plan is on its way to your inbox, and I have a copy too. I\u2019ll be in touch soon. With love, Jordan.';
-      })
-      .catch(function () {
-        sp.disabled = false; sp.textContent = 'Send my plan';
-        msg.className = 'warn'; msg.hidden = false;
-        msg.textContent = 'I\u2019m so sorry, your plan didn\u2019t send. Your plan is below: copy it and email it to me, or text me at 918-968-5002 and I\u2019ll take it from there.';
-        var box = document.getElementById('planBox'), pt = document.getElementById('planText');
-        if (box && pt) { pt.textContent = summaryText(); box.hidden = false; }
-      });
-  });
+  if (sp) sp.addEventListener('click', function () { state.sendStatus = ''; state.sentSummary = ''; autoSend(); });
+  paintSend();
+  autoSend();
   var sh = document.getElementById('sharePlan');
   if (sh) sh.addEventListener('click', function () {
     var t = partnerText(), box = document.getElementById('shareBox'), st = document.getElementById('shareText');
@@ -822,6 +807,32 @@ function bind() {
   var nx = document.getElementById('next'); if (nx) nx.addEventListener('click', function () { state.i++; render(); focusHead(); });
   var bk = document.getElementById('back'); if (bk) bk.addEventListener('click', function () { state.i--; render(); focusHead(); });
   var rs = document.getElementById('restart'); if (rs) rs.addEventListener('click', function () { state = fresh(); render(); focusHead(); });
+}
+// Sends the plan by itself when the results appear (and again only if the answers changed).
+function paintSend() {
+  var msg = document.getElementById('sendMsg'); if (!msg) return;
+  var sp = document.getElementById('sendPlan'), help = document.getElementById('sendHelp');
+  var box = document.getElementById('planBox'), pt = document.getElementById('planText');
+  var st = state.sendStatus;
+  msg.className = st === 'failed' ? 'warn' : 'note';
+  msg.textContent = st === 'sent' ? 'Your plan is on its way to your inbox, and I have a copy too. I\u2019ll be in touch soon. With love, Jordan.'
+    : st === 'failed' ? 'I\u2019m so sorry, your plan didn\u2019t send. Your plan is below: copy it and email it to me, or text me at 918-968-5002 and I\u2019ll take it from there.'
+    : 'Sending your plan to your inbox\u2026';
+  if (sp) sp.hidden = st !== 'failed';
+  if (help) help.hidden = st !== 'failed';
+  if (st === 'failed' && box && pt) { pt.textContent = summaryText(); box.hidden = false; }
+}
+function autoSend() {
+  if (!document.getElementById('sendMsg') || state.sendStatus === 'sending') return;
+  var summary = summaryText();
+  if ((state.sendStatus === 'sent' || state.sendStatus === 'failed') && state.sentSummary === summary) return;
+  state.sendStatus = 'sending'; state.sentSummary = summary; paintSend();
+  var full = state.name.trim() + (state.family.trim() ? ' ' + state.family.trim() : '');
+  fetch('https://hearth-checkout.jordansrowlan.workers.dev/send-plan', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: full, email: state.email.trim(), phone: state.phone.trim(), summary: summary, website: state.hp }) })
+    .then(function (r) { return r.json().then(function (d) { if (!r.ok || !d.ok) throw new Error(d.error || 'failed'); }); })
+    .then(function () { state.sendStatus = 'sent'; paintSend(); })
+    .catch(function () { state.sendStatus = 'failed'; paintSend(); });
 }
 function focusHead() { var h = card.querySelector('h1, .plan-name'); if (h) { h.setAttribute('tabindex', '-1'); h.focus({ preventScroll: false }); } }
 
