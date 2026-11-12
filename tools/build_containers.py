@@ -41,7 +41,9 @@ for od in orders:
 for it in PLATE: cnt[it] += plates
 extra = collections.OrderedDict([("Food labels (one per pan, cup and plate)", dishes + plates),
    ("Reheating cards (one per dish and plate)", dishes + plates), ("Delivery bags (one per order)", len(orders))])
-wb = openpyxl.load_workbook(path)
+import os
+wb = openpyxl.load_workbook(path) if os.path.exists(path) else openpyxl.Workbook()
+if not os.path.exists(path): wb.remove(wb.active)
 if "Containers" in wb.sheetnames: del wb["Containers"]
 ws = wb.create_sheet("Containers", 0)
 T = "914117"; thin = Side(style="thin", color="D6C7B5"); F = lambda **k: Font(name="Arial", **k)
