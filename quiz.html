@@ -234,6 +234,11 @@ var DETAIL_HINT = {
   soy: 'For example: no soy sauce, tofu or soy lecithin',
   other: 'Tell me what to avoid and why'
 };
+var CUISINES = [['med', 'Mediterranean'], ['ital', 'Italian'], ['mex', 'Mexican'], ['asian', 'Asian'], ['indian', 'Indian'], ['comfort', 'Comfort food'], ['surprise', 'Surprise me']];
+var DRINKS = [['coffee', 'Coffee'], ['tea', 'Tea'], ['energy', 'Energy drinks'], ['soda', 'Soda'], ['sparkling', 'Sparkling water'], ['still', 'Still water'], ['kombucha', 'Kombucha'], ['juice', 'Juice']];
+var COFFEE = [['drip', 'Drip coffee'], ['latte', 'Espresso or lattes'], ['cold', 'Cold brew or iced'], ['decaf', 'Decaf']];
+var TEA = [['black', 'Black tea'], ['green', 'Green tea'], ['matcha', 'Matcha'], ['herbal', 'Herbal, caffeine-free']];
+var LUNCH = { hot: 'Hot lunches to heat up', cold: 'Chilled lunches in divided containers', mix: 'A mix of both' };
 var WEEK = ['Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 var ADD = { bread: 40, sweet: 35, little: 25, earth: 100, third: 100 };
 // Kitchen Reset prices by plan, serving style and household size; each list is indexed by the number of Little Plates
@@ -251,7 +256,7 @@ var SHOTS_PER_PERSON = 7;
 function fresh() {
   return { i: 0, name: '', family: '', birthday: '', email: '', phone: '', hp: '', sendStatus: '', sentSummary: '', season: null, plan: null, people: null, adults: 1, children: 0, ages: [],
     style: null, fridge: null, diet: {}, detail: {}, bread: false, sweet: false, none: false, little: [], earth: null,
-    days: [], access: null, drop: null, pets: null, accessNote: '' };
+    days: [], access: null, drop: null, pets: null, accessNote: '', email: '', phone: '', breakfast: null, lunch: null, cuisine: {}, drink: {}, coffee: {}, tea: {}, brands: '' };
 }
 var state = fresh();
 var card = document.getElementById('card');
@@ -262,20 +267,34 @@ function styleOf() { return headCount() === 1 ? 'single' : state.style; }
 function thirdPrep() { return bigHarvest() && state.style === 'single' && state.fridge === 'no'; }
 function chosenDiets() { return DIETS.filter(function (d) { return d[0] !== 'none' && state.diet[d[0]]; }); }
 function det(k) { if (!state.detail[k]) state.detail[k] = { who: '', what: '' }; return state.detail[k]; }
+var LISTS = { drink: DRINKS, coffee: COFFEE, tea: TEA };
+function picked(grp) { return LISTS[grp].filter(function (c) { return state[grp][c[0]]; }).map(function (c) { return c[1]; }); }
+function drinkLine() {
+  var d = picked('drink'), out = [];
+  d.forEach(function (x) {
+    if (x === 'Coffee' && picked('coffee').length) out.push('Coffee (' + picked('coffee').join(', ').toLowerCase() + ')');
+    else if (x === 'Tea' && picked('tea').length) out.push('Tea (' + picked('tea').join(', ').toLowerCase() + ')');
+    else out.push(x);
+  });
+  return out.join(', ');
+}
+function gfw() { return state.diet.gf ? 'Gluten-free ' : 'Fresh '; }
+function cuisineList() { return CUISINES.filter(function (c) { return state.cuisine[c[0]]; }).map(function (c) { return c[1]; }); }
 function littleCount() { return state.little.filter(Boolean).length; }
 
 function steps() {
   var s = ['name', 'season', 'meals', 'people'];
   if (state.people > 1) s.push('table', 'style');
-  s.push('diet');
+  if (state.plan && state.plan !== 'taste') s.push('lunch');
+  s.push('cuisine', 'drinks', 'diet');
   if (chosenDiets().length) s.push('dietDetail');
-  if (!state.diet.gf) s.push('extras');
+  s.push('extras');
   if (state.people > 1 && state.children > 0) s.push('little');
   if (state.plan !== 'harvest') s.push('earth');
   s.push('days', 'access', 'result');
   return s;
 }
-var SECTION = { name: 'About you', season: 'Your season', meals: 'Your meals', people: 'Your table', table: 'Your table', style: 'How you eat', diet: 'Dietary needs', dietDetail: 'Dietary needs', extras: 'Homemade extras', little: 'Little Plates', earth: 'Waste less', days: 'Your schedule', access: 'Getting in' };
+var SECTION = { drinks: 'Your drinks', lunch: 'Your lunches', cuisine: 'Your flavors', name: 'About you', season: 'Your season', meals: 'Your meals', people: 'Your table', table: 'Your table', style: 'How you eat', diet: 'Dietary needs', dietDetail: 'Dietary needs', extras: 'Homemade extras', little: 'Little Plates', earth: 'Waste less', days: 'Your schedule', access: 'Getting in' };
 
 function weekly() { var t = TIERS[state.plan].price, n = headCount(); return n <= 1 ? t[0] : t[1] + (n - 2) * t[2]; }
 function groceries() { return TIERS[state.plan].groc * headCount(); }
@@ -294,7 +313,7 @@ function resetFee() {
 }
 function addons() {
   var a = [];
-  if (state.bread) a.push(['Fresh sourdough', 'One or two loaves a week from your own sourdough mother', ADD.bread]);
+  if (state.bread) a.push([gfw() + 'sourdough', 'One or two loaves a week from your own ' + (state.diet.gf ? 'gluten-free ' : '') + 'sourdough mother', ADD.bread]);
   if (state.sweet) a.push(['A little something sweet', 'One homemade treat for your week' + treatNote(), ADD.sweet]);
   var lc = littleCount();
   if (lc) a.push(['Little Plates', lc + (lc === 1 ? ' child' : ' children') + ', kid-friendly single servings', ADD.little * lc]);
@@ -314,6 +333,7 @@ function listJoin(a) { return a.length <= 1 ? (a[0] || '') : a.slice(0, -1).join
 function ageWord(a) { return a === '0' ? 'under 1' : a; }
 function treatNote() {
   var t = [];
+  if (state.diet.gf) t.push('gluten-free');
   if (state.diet.sugar) t.push('sugar-free');
   if (state.diet.df) t.push('dairy-free');
   return t.length ? ', made ' + t.join(' and ') : '';
@@ -365,12 +385,12 @@ function render() {
     h += progress() + '<h1>Let’s start with you.</h1>' +
       '<p class="lede">A few gentle questions, and I’ll put together a plan made for your home.</p>' +
       '<div class="field"><label for="firstName">Your first name</label><input id="firstName" type="text" autocomplete="given-name" value="' + esc(state.name) + '"></div>' +
-      '<div class="field"><label for="email">Your email</label><input id="email" type="email" autocomplete="email" inputmode="email" value="' + esc(state.email) + '"><small class="hint">I\u2019ll email your plan to you as soon as you finish.</small></div>' +
       '<input type="text" id="hkWebsite" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" value="' + esc(state.hp) + '">' +
-      '<div class="field"><label for="phone">Your cell phone</label><input id="phone" type="tel" autocomplete="tel" inputmode="tel" value="' + esc(state.phone) + '"><small class="hint">So I can text you about your welcome call.</small></div>' +
       '<div class="field"><label for="familyName">Your family name (optional)</label><input id="familyName" type="text" autocomplete="family-name" value="' + esc(state.family) + '"></div>' +
+      '<div class="field"><label for="email">Your email</label><input id="email" type="email" autocomplete="email" inputmode="email" value="' + esc(state.email) + '"><small class="hint">I’ll send a copy of your plan here.</small></div>' +
+      '<div class="field"><label for="phone">Your cell phone</label><input id="phone" type="tel" autocomplete="tel" inputmode="tel" value="' + esc(state.phone) + '"></div>' +
       '<div class="field"><label for="birthday">Your birthday (optional)</label><input id="birthday" type="date" autocomplete="bday" value="' + esc(state.birthday) + '"><small class="hint">So I can celebrate you.</small></div>' +
-      nav(contactOk());
+      nav(aboutOk());
   } else if (step === 'season') {
     h += progress() + '<h1>For this season of your life, make Hearth your ritual.</h1>' +
       '<p class="lede">Which feels most like where you are right now?</p><div class="options" role="group" aria-label="Your season">';
@@ -383,7 +403,37 @@ function render() {
       opt('plan', 'taste', 'A little help each week', 'Five meals a week, for whenever you want them. A gentle first step.') +
       opt('plan', 'gather', 'My weekdays, with nights out', 'Breakfast, lunch and dinner for five days. Weekends and dinners out are yours.') +
       opt('plan', 'harvest', 'Every meal, every day of the week', 'Breakfast, lunch and dinner, seven days. Nothing left to think about.') +
-      '</div>' + nav(!!state.plan);
+      '</div>';
+    var bfPlan = state.plan === 'gather' || state.plan === 'harvest';
+    if (bfPlan) {
+      h += '<div class="aside"><p>Breakfast is included in your plan, and it’s optional. Would you like it?</p>' +
+        '<div class="chips" role="group" aria-label="Breakfast">' + opt('breakfast', 'yes', 'Yes, include breakfast', '') + opt('breakfast', 'no', 'Skip breakfast for now', '') + '</div></div>';
+    }
+    h += nav(!!state.plan && (!bfPlan || !!state.breakfast));
+  } else if (step === 'lunch') {
+    h += progress() + '<h1>How would you like your lunches?</h1>' +
+      '<p class="lede">Lunches are packed to go, so they’re easy to grab on your way out the door.</p>' +
+      '<div class="options" role="group" aria-label="Lunch style">' +
+      opt('lunch', 'hot', 'Hot lunches', 'In glass, ready to heat up') +
+      opt('lunch', 'cold', 'Chilled lunches', 'In divided containers, ready to eat cold, with dressings on the side') +
+      opt('lunch', 'mix', 'A mix of both', '') +
+      '</div>' + nav(!!state.lunch);
+  } else if (step === 'cuisine') {
+    var nc = Object.keys(state.cuisine).filter(function (k) { return state.cuisine[k]; }).length;
+    h += progress() + '<h1>Which flavors do you love?</h1>' +
+      '<p class="lede">Choose up to three, and I’ll build your menus around them.</p>' +
+      '<div class="chips" role="group" aria-label="Cuisines">';
+    CUISINES.forEach(function (c) { h += '<button type="button" class="opt" data-cuisine="' + c[0] + '" aria-pressed="' + !!state.cuisine[c[0]] + '"><strong>' + esc(c[1]) + '</strong></button>'; });
+    h += '</div>' + nav(nc > 0);
+  } else if (step === 'drinks') {
+    var chip = function (grp, c) { return '<button type="button" class="opt" data-multi="' + grp + '" data-val="' + c[0] + '" aria-pressed="' + !!state[grp][c[0]] + '"><strong>' + esc(c[1]) + '</strong></button>'; };
+    h += progress() + '<h1>What do you love to drink?</h1>' +
+      '<p class="lede">Choose all that you enjoy.</p>' +
+      '<div class="chips" role="group" aria-label="Drinks">' + DRINKS.map(function (c) { return chip('drink', c); }).join('') + '</div>';
+    if (state.drink.coffee) h += '<div class="field"><p class="eyebrow">How do you take your coffee?</p><div class="chips" role="group" aria-label="Coffee">' + COFFEE.map(function (c) { return chip('coffee', c); }).join('') + '</div></div>';
+    if (state.drink.tea) h += '<div class="field"><p class="eyebrow">Which teas do you like?</p><div class="chips" role="group" aria-label="Tea">' + TEA.map(function (c) { return chip('tea', c); }).join('') + '</div></div>';
+    h += '<div class="field"><label for="brands">Any brands you always keep in the fridge? (optional)</label><input id="brands" type="text" placeholder="For example: LaCroix, Topo Chico, Celsius" value="' + esc(state.brands) + '"></div>' +
+      nav(picked('drink').length > 0);
   } else if (step === 'people') {
     h += progress() + '<h1>How many people are you feeding?</h1><div class="options people" role="group" aria-label="People">';
     for (var n = 1; n <= 6; n++) h += opt('people', n, String(n) + (n === 6 ? '+' : ''), n === 1 ? 'person' : 'people');
@@ -432,9 +482,9 @@ function render() {
     h += '</div>' + nav(true);
   } else if (step === 'extras') {
     h += progress() + '<h1>Would you like any homemade extras?</h1>' +
-      '<p class="lede">Every plan already includes a fresh wellness shot for each person, every morning. These are optional, and you can choose either or both.</p>' +
+      '<p class="lede">Every plan already includes a fresh morning wellness shot for each person, in a new flavor each week. These are optional, and you can choose either or both.</p>' +
       '<div class="options" role="group" aria-label="Homemade extras">' +
-      tog('bread', 'Fresh sourdough · ' + money(ADD.bread) + ' a week', 'One or two loaves a week from your family’s very own sourdough mother') +
+      tog('bread', gfw() + 'sourdough · ' + money(ADD.bread) + ' a week', 'One or two loaves a week from your family’s very own ' + (state.diet.gf ? 'gluten-free ' : '') + 'sourdough mother') +
       tog('sweet', 'A little something sweet · ' + money(ADD.sweet) + ' a week', 'One homemade treat for your week' + treatNote()) +
       tog('none', 'No thanks', 'Just the wellness shots for us') +
       '</div>' + nav(state.bread || state.sweet || state.none);
@@ -487,6 +537,7 @@ function render() {
   bind();
 }
 
+function aboutOk() { return contactOk(); }
 function displayName() { return state.name.trim(); }
 function familyLabel() {
   var f = state.family.trim();
@@ -528,11 +579,11 @@ function letterHTML() {
   if (chosenDiets().some(function (x) { var y = det(x[0]); return y.who.trim() || y.what.trim(); })) d += 'I’ve read every detail you shared, and we’ll go over them together on our welcome call so nothing is missed.';
   if (d) paras.push(d.trim());
   var extras = [];
-  if (state.bread) extras.push('fresh sourdough from your very own sourdough mother');
+  if (state.bread) extras.push((state.diet.gf ? 'gluten-free ' : 'fresh ') + 'sourdough from your very own sourdough mother');
   if (state.sweet) extras.push('a little something sweet to end your week');
   var lc = littleCount();
   if (lc) extras.push('Little Plates for your ' + (lc === 1 ? 'little one' : lc + ' little ones'));
-  paras.push('Each week we’ll plan your menu together, and every morning starts with a fresh wellness shot' + (n === 1 ? ' made for you.' : ' for everyone at your table.') + (extras.length ? ' And because you asked, there will be ' + listJoin(extras) + '.' : ''));
+  paras.push('Each week we’ll plan your menu together, and every morning starts with a fresh wellness shot' + (n === 1 ? ' made for you' : ' for everyone at your table') + ', in a new flavor each week.' + (extras.length ? ' And because you asked, there will be ' + listJoin(extras) + '.' : ''));
   if (state.plan === 'harvest' || state.earth === 'yes') paras.push('We’ll waste less together, too. Your prep scraps become homemade stock, and your pantry stays full in your own glass jars.');
   paras.push('I can’t wait to bring warmth back to your table.');
   return '<div class="letter"><p class="dear">Dear ' + esc(displayName()) + ',</p>' + paras.map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('') + '<p class="sign">With love, Jordan</p></div>';
@@ -564,6 +615,11 @@ function sharedHTML() {
     g1.push(['Your table', who]);
     g1.push(['Your meals', styleOf() === 'family' ? 'Family-style' : 'Single servings']);
   }
+  if (state.plan !== 'taste' && state.breakfast) g1.push(['Breakfast', state.breakfast === 'yes' ? 'Included' : 'Skipping for now']);
+  if (state.plan !== 'taste' && state.lunch) g1.push(['Lunches', LUNCH[state.lunch]]);
+  if (cuisineList().length) g1.push(['Favorite flavors', cuisineList().join(', ')]);
+  if (drinkLine()) g1.push(['Drinks', drinkLine()]);
+  if (state.brands.trim()) g1.push(['In your fridge', state.brands.trim()]);
   var cd = chosenDiets();
   if (!cd.length) g1.push(['Dietary needs', 'None noted']);
   cd.forEach(function (d) {
@@ -634,7 +690,7 @@ function resultHTML() {
     '<h3 class="when-h">What you pay, and when</h3><ol class="paywhen">' +
       '<li><span class="pw-when">Before we begin</span><span class="pw-what">Kitchen Reset, one time</span><span class="pw-amt">' + money(resetFee()) + '</span></li>' +
       '<li><span class="pw-when">Ahead of time</span><span class="pw-what">Your grocery fund, paid weekly or monthly (' + money(groceries()) + ' a month)</span><span class="pw-amt">about ' + money(gw) + ' / week</span></li>' +
-      '<li><span class="pw-when">After each week</span><span class="pw-what">My service, billed once that week is done</span><span class="pw-amt">' + money(svc) + ' / week</span></li>' +
+      '<li><span class="pw-when">After each week</span><span class="pw-what">My service, billed once that week is done and due by the end of that week</span><span class="pw-amt">' + money(svc) + ' / week</span></li>' +
     '</ol>' + resetHTML() +
     '<details class="more"><summary>See what\u2019s in my service</summary><div class="rows">' + rows + '</div>' +
     '<p class="note">I shop for your groceries at cost; every receipt is yours to see, and anything unused rolls forward.' + (state.people === 6 ? ' For larger families, I\u2019ll confirm your exact plan on our welcome call.' : '') + '</p></details>' +
@@ -666,6 +722,11 @@ function summaryText(forJordan) {
   } else if (state.season) { L.push(''); L.push('Your season: ' + S[state.season]); }
   sec(her + 'plan');
   L.push(p.name + ': ' + p.meals + ', for ' + n + (n === 1 ? ' person' : ' people') + (state.people === 6 ? ' (6 or more; confirm on the call)' : ''));
+  if (state.plan !== 'taste' && state.breakfast) L.push('Breakfast: ' + (state.breakfast === 'yes' ? 'yes, include it' : 'skip for now'));
+  if (state.plan !== 'taste' && state.lunch) L.push('Lunches: ' + LUNCH[state.lunch]);
+  var cz = cuisineList(); if (cz.length) L.push('Favorite flavors: ' + cz.join(', '));
+  if (drinkLine()) L.push('Drinks: ' + drinkLine());
+  if (state.brands.trim()) L.push('Always in her fridge: ' + state.brands.trim());
   if (n > 1) L.push('Portions: ' + (styleOf() === 'family' ? 'family-style' : 'single servings') + (bigHarvest() && state.style === 'single' ? (state.fridge === 'yes' ? ' (has a second fridge)' : ' (no second fridge, so a third prep day)') : ''));
   L.push('Service fee: ' + money(weekly()) + '/week');
   adds.forEach(function (a) { L.push('+ ' + a[0] + ': ' + (a[2] ? money(a[2]) + '/week' : 'included') + (a[0] === 'Little Plates' ? ' (' + a[1] + ')' : '')); });
@@ -674,7 +735,7 @@ function summaryText(forJordan) {
   L.push('Kitchen Reset (paid ahead): ' + money(resetFee()));
   var gc = glassCounts();
   L.push((forJordan ? 'Glassware to bring: ' : 'Glassware that\u2019s yours to keep: ') + [gc.dishes ? gc.dishes + ' family dishes' : '', gc.singles ? gc.singles + ' single containers' + (gc.family ? ' (Little Plates)' : '') : '', gc.shots + ' shot bottles'].filter(Boolean).join(', '));
-  L.push('Service fee billed weekly, after each week\u2019s service');
+  L.push('Service fee billed weekly, after each week\u2019s service; due by the end of that week');
   L.push('All in, each week (service + groceries): about ' + money(weeklyTotal() + groceriesWeekly()));
   if (state.people > 1) {
     sec(her + 'table');
@@ -704,14 +765,14 @@ function partnerText() {
   L.push('WHAT IT COSTS');
   L.push('• About ' + money(svc + gw) + ' a week, all in: ' + money(svc) + ' for her service, plus about ' + money(gw) + ' for groceries.');
   L.push('• Groceries are bought at cost, with no markup. We see every receipt, and anything unused rolls forward.');
-  L.push('• Her service is billed after each week is done, so we only pay for weeks already cooked.');
+  L.push('• Her service is billed after each week is done, so we only pay for weeks already cooked. It’s due by the end of that week.');
   L.push('• One-time Kitchen Reset to get started: ' + money(resetFee()) + '.');
   L.push('');
   L.push('WHAT HER WEEKLY SERVICE COVERS');
   L.push('• A menu planned with us each week, around our favorites' + (chosenDiets().length ? ' and our dietary needs' : ''));
   L.push('• All the planning, shopping, cooking in our kitchen and cleanup');
   L.push('• Meals stacked in glass in our fridge, labeled with what it is, the date and how to heat it');
-  L.push('• A fresh wellness shot for ' + (n === 1 ? 'me' : 'each of us') + ' every morning');
+  L.push('• A fresh wellness shot for ' + (n === 1 ? 'me' : 'each of us') + ' every morning, in a new flavor each week');
   adds.forEach(function (a) { L.push('• ' + a[0] + (a[2] ? ' (' + money(a[2]) + ' a week)' : ' (included)') + ': ' + (a[1].charAt(0).toLowerCase() + a[1].slice(1)).replace(/\byour\b/g, 'our')); });
   L.push('');
   L.push('WHAT THE KITCHEN RESET COVERS');
@@ -724,7 +785,6 @@ function partnerText() {
   L.push('Chef Jordan · 918-968-5002 · jordansrowlan@gmail.com · hearthkitchencompany.com');
   return L.join('\n');
 }
-function mailtoHref() { return 'mailto:jordansrowlan@gmail.com?subject=' + encodeURIComponent('My Hearth plan: ' + state.name.trim()) + '&body=' + encodeURIComponent(summaryText()); }
 
 function syncAges() {
   while (state.ages.length < state.children) state.ages.push('');
@@ -756,6 +816,19 @@ function bind() {
       render();
     });
   });
+  card.querySelectorAll('.opt[data-cuisine]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var k = b.getAttribute('data-cuisine');
+      var on = Object.keys(state.cuisine).filter(function (x) { return state.cuisine[x]; });
+      if (state.cuisine[k]) state.cuisine[k] = false;
+      else if (on.length < 3) state.cuisine[k] = true;
+      render();
+    });
+  });
+  card.querySelectorAll('.opt[data-multi]').forEach(function (b) {
+    b.addEventListener('click', function () { var g = b.getAttribute('data-multi'), v = b.getAttribute('data-val'); state[g][v] = !state[g][v]; render(); });
+  });
+  var br = document.getElementById('brands'); if (br) br.addEventListener('input', function () { state.brands = br.value; });
   card.querySelectorAll('.opt[data-little]').forEach(function (b) {
     b.addEventListener('click', function () { var k = Number(b.getAttribute('data-little')); state.little[k] = !state.little[k]; render(); });
   });
@@ -764,7 +837,6 @@ function bind() {
       var k = b.getAttribute('data-diet');
       if (k === 'none') { var on = !state.diet.none; state.diet = {}; state.diet.none = on; }
       else { state.diet[k] = !state.diet[k]; state.diet.none = false; }
-      if (state.diet.gf) { state.bread = false; state.sweet = false; state.none = false; }
       render();
     });
   });
@@ -791,10 +863,10 @@ function bind() {
     });
   });
   var fn = document.getElementById('firstName');
-  function recheck() { var nx = document.getElementById('next'); if (nx) nx.disabled = !contactOk(); }
-  if (fn) fn.addEventListener('input', function () { state.name = fn.value; recheck(); });
-  var em = document.getElementById('email'); if (em) em.addEventListener('input', function () { state.email = em.value; recheck(); });
-  var ph = document.getElementById('phone'); if (ph) ph.addEventListener('input', function () { state.phone = ph.value; recheck(); });
+  var syncNext = function () { var nx = document.getElementById('next'); if (nx) nx.disabled = !aboutOk(); };
+  if (fn) fn.addEventListener('input', function () { state.name = fn.value; syncNext(); });
+  var em = document.getElementById('email'); if (em) em.addEventListener('input', function () { state.email = em.value; syncNext(); });
+  var ph = document.getElementById('phone'); if (ph) ph.addEventListener('input', function () { state.phone = ph.value; syncNext(); });
   var fam = document.getElementById('familyName'); if (fam) fam.addEventListener('input', function () { state.family = fam.value; });
   var bd = document.getElementById('birthday'); if (bd) bd.addEventListener('input', function () { state.birthday = bd.value; });
   var an = document.getElementById('accessNote'); if (an) an.addEventListener('input', function () { state.accessNote = an.value; });
