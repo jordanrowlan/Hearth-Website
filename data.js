@@ -15,9 +15,8 @@ var HEARTH = {
     instagram: ""
   },
 
-  // Formspree endpoint for the Contact form and email signup.
-  // Replace FORMSPREE_ID with the ID from formspree.io (looks like "abcdwxyz").
-  formspree: "https://formspree.io/f/FORMSPREE_ID",
+  // Where the Contact form and email sign-up are sent (emailed to Jordan's Gmail).
+  formsApi: "https://hearth-checkout.jordansrowlan.workers.dev/send-form",
 
   thanksgiving: {
     orderBy: "2026-11-14T23:59:00-06:00",   // orders close (Central time)

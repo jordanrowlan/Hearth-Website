@@ -12,5 +12,5 @@
     if (links.length) social.innerHTML = links.join(""); else social.remove();
   }
 
-  document.querySelectorAll("form[data-formspree]").forEach(function (f) { f.setAttribute("action", HEARTH.formspree); });
+  document.querySelectorAll("form[data-formspree]").forEach(function (f) { f.setAttribute("action", HEARTH.formsApi); });
 })();
