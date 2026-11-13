@@ -911,6 +911,12 @@ function paintSend() {
   if (help) help.hidden = st !== 'failed';
   if (st === 'failed' && box && pt) { pt.textContent = summaryText(); box.hidden = false; }
 }
+// Her answers, for Jordan's private client records (no internal page state).
+function quizAnswers() {
+  var a = JSON.parse(JSON.stringify(state));
+  ['i', 'hp', 'sendStatus', 'sentSummary'].forEach(function (k) { delete a[k]; });
+  return a;
+}
 function autoSend() {
   if (!document.getElementById('sendMsg') || state.sendStatus === 'sending') return;
   var summary = summaryText();
@@ -918,7 +924,7 @@ function autoSend() {
   state.sendStatus = 'sending'; state.sentSummary = summary; paintSend();
   var full = state.name.trim() + (state.family.trim() ? ' ' + state.family.trim() : '');
   fetch('https://hearth-checkout.jordansrowlan.workers.dev/send-plan', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name: full, email: state.email.trim(), phone: state.phone.trim(), summary: summary, jordanSummary: summaryText(true), website: state.hp }) })
+    body: JSON.stringify({ name: full, email: state.email.trim(), phone: state.phone.trim(), summary: summary, jordanSummary: summaryText(true), answers: quizAnswers(), website: state.hp }) })
     .then(function (r) { return r.json().then(function (d) { if (!r.ok || !d.ok) throw new Error(d.error || 'failed'); }); })
     .then(function () { state.sendStatus = 'sent'; paintSend(); })
     .catch(function () { state.sendStatus = 'failed'; paintSend(); });
