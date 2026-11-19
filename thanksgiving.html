@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Thanksgiving Pre-Order | Hearth Kitchen Co.</title>
-<meta name="description" content="Order Thanksgiving turkey, sides and pies from Chef Jordan, delivered free across the Tulsa Metro area on Wednesday, Nov 25.">
+<title>Thanksgiving | Hearth Kitchen Co.</title>
+<meta name="description" content="Thanksgiving pre-orders are closed. Thank you to everyone who ordered turkey, sides and pies from Chef Jordan for delivery on Wednesday, Nov 25.">
 <meta name="theme-color" content="#914117">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Figtree:wght@400;500;600&family=Pinyon+Script&display=swap">
@@ -22,19 +22,19 @@
 
 <section class="stack" style="padding-top:12px">
   <div class="label">Holiday menu</div>
-  <h1>Thanksgiving Pre-Order</h1>
+  <h1>Thank you for a full Thanksgiving table!</h1>
   <div id="circlebanner" class="circle" hidden><b>Welcome, Inner Circle!</b> <span data-circle-label>Inner Circle 10% off</span> is applied to everything you add. You'll see your savings in your order total.</div>
-  <p class="lede">Homemade sides, turkey and pies, cooked in small batches and brought to your door the day before Thanksgiving. Pick what you need, pay ahead, and put your feet up.</p>
+  <p class="lede">Thanksgiving pre-orders are closed. To every family who trusted me with a piece of your holiday table: thank you. It means more than I can say, and I can't wait to cook for you.</p>
   <div class="facts">
-    <div class="fact"><span class="label">Order by</span><b data-tg="orderByText">Saturday, Nov 14</b></div>
+    <div class="fact"><span class="label">Orders</span><b>Closed Nov 14</b></div>
     <div class="fact"><span class="label">Delivered</span><b data-tg="deliveryText">Wednesday, Nov 25</b></div>
     <div class="fact"><span class="label">Delivery</span><b>Free, Tulsa Metro</b></div>
   </div>
   <div class="card">
     <div class="stack" style="gap:8px">
-      <p>Everything arrives chilled on Wednesday, fully cooked and ready to reheat on Thanksgiving Day. Sides and turkey come in oven-safe foil pans, and every order includes reheating cards and a simple Thanksgiving Day timeline. Please list any food allergies in the notes, and I will do my best to adjust a dish when I know ahead of time.</p>
-      <p><b>One tip as you order:</b> think about your oven space. Most home ovens fit about 4–5 pans on two racks. Your personal reheating timeline will help you plan around it.</p>
-      <p>I plan the delivery route myself and will text you a two-hour delivery window before Thanksgiving week.</p>
+      <p><b>If you ordered,</b> here's what's next. I'll text you a two-hour delivery window before Wednesday. Your food arrives chilled on <span data-tg="deliveryText">Wednesday, Nov 25</span>, fully cooked and ready to reheat on Thanksgiving Day.</p>
+      <p>Please put everything straight into the fridge when it arrives. Each order comes with reheating cards and a simple Thanksgiving Day timeline, and your personal timeline will arrive by email.</p>
+      <p>Questions about your order? Text or call me at 918-968-5002.</p>
       <p class="signoff" style="font-size:1.7rem">With love, Jordan</p>
     </div>
   </div>
@@ -48,11 +48,12 @@
     </div>
     <p id="zipmsg" role="status" hidden></p>
   </form>
-  <div id="closed" class="closed" hidden><b>Thanksgiving orders are closed.</b> Thank you to everyone who ordered!</div>
+  <div id="closed" class="closed" hidden><b>Thanksgiving orders closed on Saturday, Nov 14.</b> The menu below is here for reference. Thank you to everyone who ordered!</div>
   <div id="soldout" class="closed" hidden><b>Thanksgiving is fully booked!</b> Thank you so much for the love. Text me at 918-968-5002 to join the waitlist in case a spot opens up.</div>
   <div id="almostfull" class="circle" hidden><b>Only a few spots left!</b> My Thanksgiving kitchen is almost full, so order soon.</div>
 </section>
 
+<section class="stack" style="padding-bottom:0"><div class="label">This year's menu</div></section>
 <section id="menu" aria-label="Thanksgiving menu" style="padding-top:0"></section>
 
 <section class="panel stack" aria-labelledby="plate">
@@ -70,7 +71,22 @@
   </div>
 </section>
 
-<section class="stack" aria-labelledby="order">
+<section class="dark stack" aria-labelledby="missed" id="missedsec">
+  <div class="label">Missed Thanksgiving?</div>
+  <h2 id="missed">Let's gather around the next one.</h2>
+  <p>Join my list to hear about holiday menus first, or get in touch about a holiday dinner, a gathering or weekly meals made in your kitchen.</p>
+  <form class="inline-form" action="#" method="POST" data-formspree data-thanks="You're on the list. Thank you! With love, Jordan.">
+    <label for="tg-news-email" class="skip">Email</label>
+    <input id="tg-news-email" name="email" type="email" autocomplete="email" placeholder="Your email" required>
+    <input type="hidden" name="_subject" value="New email signup">
+    <input type="hidden" name="list" value="newsletter">
+    <button class="btn" type="submit">Sign me up</button>
+    <p class="formmsg" hidden role="status" style="flex-basis:100%"></p>
+  </form>
+  <p><a class="btn ghost" href="contact.html">Plan a holiday gathering</a> <a class="btn ghost" href="quiz.html">Find your Hearth plan</a></p>
+</section>
+
+<section class="stack" aria-labelledby="order" id="ordersec">
   <h2 id="order">Ready to order?</h2>
   <p data-cart-off>Tap below to choose your dishes and pay securely by card, Apple Pay or Google Pay. <b>Everything is à la carte.</b> Your cart opens with a few favorites, so set any of them to 0 and add exactly what you want, from a single pie to the whole feast.</p>
   <p data-cart-on hidden><b>Everything is à la carte.</b> Tap <b>Add</b> on any dish above, from a single pie to the whole feast. Your order total follows you at the bottom of the screen, and you'll pay securely by card, Apple Pay or Google Pay.</p>
@@ -109,6 +125,7 @@
 </footer>
 <script src="data.js"></script>
 <script src="site.js"></script>
+<script src="form.js"></script>
 <script>
 (function(){
   var T=HEARTH.thanksgiving, m=document.getElementById("menu"), API=T.checkoutApi||"";
@@ -230,7 +247,12 @@
   if(closed) zf.hidden=true;
   try{var saved=localStorage.getItem("hearthZip");if(saved&&!closed){zi.value=saved;check(saved);}}catch(e){}
   paint(); drawCart();
-  if(closed) document.getElementById("closed").hidden=false;
+  if(closed){
+    document.getElementById("closed").hidden=false;
+    // Orders are closed: hide every way to order and the plate builder.
+    document.querySelectorAll("[data-cart-on],[data-cart-off],[data-ziphint]").forEach(function(e){e.hidden=true;});
+    var os=document.getElementById("ordersec"); if(os) os.hidden=true;
+  } else { var ms=document.getElementById("missedsec"); if(ms) ms.hidden=true; }
 })();
 </script>
 </body>
