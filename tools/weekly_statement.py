@@ -18,7 +18,7 @@ JSON shape (money as numbers):
   "billed_to": "Client name",
   "from_lines": ["Chef name", "Business name · City, State"],
   "service": {"description": "...", "detail": "Cook days ...", "qty": "1 week", "rate": 0},
-  "mileage": {"miles": 0, "rate": 0, "detail": "IRS standard business rate"},
+  "mileage": {"miles": 0, "rate": 0, "detail": "IRS standard business rate"},  # or {"flat": 0, "detail": "..."} for a flat weekly charge
   "client_name": "First name",               # used in "<name>'s grocery fund"
   "prepared_for": "Client full name",
   "purchases": [                             # every purchase since the last deposit
@@ -96,7 +96,8 @@ def build(d):
     svc = d["service"]
     mil = d["mileage"]
     svc_amt = round(svc["rate"], 2)
-    mil_amt = round(mil["miles"] * mil["rate"], 2)
+    # A flat weekly mileage charge ("flat": 35) replaces miles x rate when given.
+    mil_amt = round(mil["flat"], 2) if mil.get("flat") is not None else round(mil["miles"] * mil["rate"], 2)
     total = round(svc_amt + mil_amt, 2)
     purchases = d["purchases"]
     new = [p for p in purchases if p.get("new")]
@@ -119,7 +120,7 @@ def build(d):
 <h2>Services</h2>
 <table><tr><th>Description</th><th class="r">Qty</th><th class="r">Rate</th><th class="r">Amount</th></tr>
 <tr><td>{esc(svc["description"])}<div class="sub">{esc(svc.get("detail"))}</div></td><td class="r">{esc(svc.get("qty", "1 week"))}</td><td class="r">{money(svc["rate"])}</td><td class="r">{money(svc_amt)}</td></tr>
-<tr><td>Mileage<div class="sub">{esc(mil.get("detail", "IRS standard business rate"))}</div></td><td class="r">{mil["miles"]:g} mi</td><td class="r">{money(mil["rate"])}</td><td class="r">{money(mil_amt)}</td></tr>
+<tr><td>Mileage<div class="sub">{esc(mil.get("detail", "IRS standard business rate"))}</div></td><td class="r">{"1 week" if mil.get("flat") is not None else format(mil["miles"], "g") + " mi"}</td><td class="r">{money(mil_amt) if mil.get("flat") is not None else money(mil["rate"])}</td><td class="r">{money(mil_amt)}</td></tr>
 <tr class="tot"><td colspan="3">Total due</td><td class="r">{money(total)}</td></tr></table>
 <div class="due"><span class="lab">AMOUNT DUE</span><span class="amt">{money(total)}</span></div>
 <h2>Groceries</h2>
