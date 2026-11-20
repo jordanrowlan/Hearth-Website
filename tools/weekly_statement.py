@@ -98,7 +98,8 @@ def build(d):
     svc_amt = round(svc["rate"], 2)
     # A flat weekly mileage charge ("flat": 35) replaces miles x rate when given.
     mil_amt = round(mil["flat"], 2) if mil.get("flat") is not None else round(mil["miles"] * mil["rate"], 2)
-    total = round(svc_amt + mil_amt, 2)
+    extras = d.get("extras", [])          # optional extra lines: {"description","detail","qty","rate","amount"}
+    total = round(svc_amt + mil_amt + sum(x["amount"] for x in extras), 2)
     purchases = d["purchases"]
     new = [p for p in purchases if p.get("new")]
     new_sum = round(sum(p["total"] for p in new), 2)
@@ -121,6 +122,7 @@ def build(d):
 <table><tr><th>Description</th><th class="r">Qty</th><th class="r">Rate</th><th class="r">Amount</th></tr>
 <tr><td>{esc(svc["description"])}<div class="sub">{esc(svc.get("detail"))}</div></td><td class="r">{esc(svc.get("qty", "1 week"))}</td><td class="r">{money(svc["rate"])}</td><td class="r">{money(svc_amt)}</td></tr>
 <tr><td>Mileage<div class="sub">{esc(mil.get("detail", "IRS standard business rate"))}</div></td><td class="r">{"1 week" if mil.get("flat") is not None else format(mil["miles"], "g") + " mi"}</td><td class="r">{money(mil_amt) if mil.get("flat") is not None else money(mil["rate"])}</td><td class="r">{money(mil_amt)}</td></tr>
+{"".join(f'<tr><td>{esc(x["description"])}<div class="sub">{esc(x.get("detail"))}</div></td><td class="r">{esc(x.get("qty",""))}</td><td class="r">{money(x["rate"]) if x.get("rate") is not None else ""}</td><td class="r">{money(x["amount"])}</td></tr>' for x in extras)}
 <tr class="tot"><td colspan="3">Total due</td><td class="r">{money(total)}</td></tr></table>
 <div class="due"><span class="lab">AMOUNT DUE</span><span class="amt">{money(total)}</span></div>
 <h2>Groceries</h2>
